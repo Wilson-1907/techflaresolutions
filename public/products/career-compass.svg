@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none">
+  <rect width="800" height="450" rx="24" fill="#0a1628"/>
+  <circle cx="400" cy="200" r="120" stroke="#d4af37" stroke-width="3" fill="none" opacity="0.4"/>
+  <circle cx="400" cy="200" r="80" stroke="#22c55e" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M400 100 L420 190 L400 200 L380 190 Z" fill="#d4af37"/>
+  <text x="400" y="340" text-anchor="middle" fill="#d4af37" font-family="system-ui,sans-serif" font-size="36" font-weight="700">Career Compass</text>
+  <text x="400" y="380" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="18">AI-Powered CBE Guide · Kenya</text>
+</svg>
