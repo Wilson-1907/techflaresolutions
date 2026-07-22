@@ -33,7 +33,7 @@ export const company = {
         handle: "techflare_solutions",
         href: "https://www.tiktok.com/@techflare_solutions",
       },
-      { id: "x", name: "X", handle: "techflare_solutions", href: "https://x.com/techflare_solutions" },
+      { id: "x", name: "X", handle: "techflare_solutions", href: "https://x.com/stechflare" },
       {
         id: "linkedin",
         name: "LinkedIn",
