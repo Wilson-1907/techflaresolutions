@@ -25,7 +25,7 @@ export const company = {
         id: "facebook",
         name: "Facebook",
         handle: "techflare_solutions",
-        href: "https://www.facebook.com/techflare_solutions",
+        href: "https://www.facebook.com/profile.php?id=61592088802525",
       },
       {
         id: "tiktok",
