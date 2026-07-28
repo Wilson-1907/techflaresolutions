@@ -38,7 +38,7 @@ export const company = {
         id: "linkedin",
         name: "LinkedIn",
         handle: "techflare_solutions",
-        href: "https://www.linkedin.com/company/techflare_solutions",
+        href: "https://www.linkedin.com/company/techflaresolutionss",
       },
       {
         id: "youtube",
