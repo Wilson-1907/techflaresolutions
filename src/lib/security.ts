@@ -2,6 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 
 const buckets = new Map<string, { count: number; resetAt: number }>();
 
+/** Search engines that must be allowed for Google/Bing indexing */
+const SEARCH_ENGINE_BOTS = [
+  "googlebot",
+  "google-inspectiontool",
+  "bingbot",
+  "slurp", // Yahoo
+  "duckduckbot",
+  "baiduspider",
+  "yandexbot",
+  "applebot",
+  "facebookexternalhit",
+  "twitterbot",
+  "linkedinbot",
+];
+
 const SCRAPER_AGENTS = [
   "scrapy",
   "curl/",
@@ -75,9 +90,17 @@ export function rateLimit(
   return null;
 }
 
+export function isSearchEngineBot(ua: string): boolean {
+  return SEARCH_ENGINE_BOTS.some((b) => ua.includes(b));
+}
+
 export function isBotOrScraper(req: NextRequest): boolean {
   const ua = (req.headers.get("user-agent") || "").toLowerCase();
   if (!ua || ua.length < 12) return true;
+
+  // Never block Google, Bing, or other search crawlers — required for indexing
+  if (isSearchEngineBot(ua)) return false;
+
   if (SCRAPER_AGENTS.some((b) => ua.includes(b))) return true;
 
   const suspiciousHeaders =
@@ -104,12 +127,23 @@ export function validateOrigin(req: NextRequest): boolean {
   }
 }
 
-export function applySecurityHeaders(response: NextResponse): NextResponse {
+export function applySecurityHeaders(
+  response: NextResponse,
+  options?: { allowIndexing?: boolean }
+): NextResponse {
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), display-capture=()");
-  response.headers.set("X-Robots-Tag", "noai, noimageai, noarchive, nosnippet");
+  response.headers.set(
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=(), display-capture=()"
+  );
+  // Prefer explicit index/follow for search engines; still discourage AI training scrapers
+  if (options?.allowIndexing) {
+    response.headers.set("X-Robots-Tag", "index, follow, max-image-preview:large, max-snippet:-1");
+  } else {
+    response.headers.set("X-Robots-Tag", "index, follow, noai, noimageai");
+  }
   response.headers.set(
     "Content-Security-Policy",
     "frame-ancestors 'none'; base-uri 'self'; form-action 'self' mailto:"

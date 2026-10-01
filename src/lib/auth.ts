@@ -1,8 +1,11 @@
+import jwt, { type SignOptions } from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
-import { getApiBaseUrl } from "./api-base";
-import { getAppOrigin } from "./app-origin";
+import { prisma } from "./db";
+import { getJwtSecret } from "./env";
+import type { UserRole } from "@prisma/client";
 
-export type UserRole = "CLIENT" | "INNOVATOR" | "EMPLOYEE" | "ADMIN" | "HOD" | "CIO";
+const JWT_SECRET = getJwtSecret();
 
 export interface AuthUser {
   id: string;
@@ -12,42 +15,81 @@ export interface AuthUser {
   role: UserRole;
   points?: number;
   communityMember?: boolean;
-  emailVerified?: boolean;
 }
 
-async function fetchSession(): Promise<AuthUser | null> {
+export async function getSessionFull() {
   const cookieStore = await cookies();
   const token = cookieStore.get("auth_token")?.value;
   if (!token) return null;
 
-  const base = getApiBaseUrl();
-  if (!base) return null;
+  const payload = verifyToken(token);
+  if (!payload) return null;
 
+  return prisma.user.findUnique({
+    where: { id: payload.id },
+    select: {
+      id: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      role: true,
+      points: true,
+      communityMember: true,
+    },
+  });
+}
+
+export async function hashPassword(password: string) {
+  return bcrypt.hash(password, 12);
+}
+
+export async function verifyPassword(password: string, hash: string) {
+  return bcrypt.compare(password, hash);
+}
+
+export function signToken(user: AuthUser) {
+  const expiresIn = (process.env.JWT_EXPIRES_IN || "7d") as SignOptions["expiresIn"];
+  return jwt.sign(
+    { id: user.id, email: user.email, role: user.role },
+    JWT_SECRET,
+    { expiresIn }
+  );
+}
+
+export function verifyToken(token: string): AuthUser | null {
   try {
-    const res = await fetch(`${base}/api/auth/me`, {
-      headers: {
-        Cookie: `auth_token=${token}`,
-        Origin: getAppOrigin(),
-        Accept: "application/json",
-      },
-      cache: "no-store",
-    });
-    if (!res.ok) return null;
-    const data = (await res.json()) as { user?: AuthUser; authenticated?: boolean };
-    return data.user ?? null;
+    const payload = jwt.verify(token, JWT_SECRET) as AuthUser & { id: string };
+    return {
+      id: payload.id,
+      email: payload.email,
+      firstName: payload.firstName || "",
+      lastName: payload.lastName || "",
+      role: payload.role,
+    };
   } catch {
     return null;
   }
 }
 
-export async function getSessionFull() {
-  return fetchSession();
-}
+export async function getSession(): Promise<AuthUser | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("auth_token")?.value;
+  if (!token) return null;
 
-export async function getSession() {
-  return fetchSession();
+  const payload = verifyToken(token);
+  if (!payload) return null;
+
+  const user = await prisma.user.findUnique({
+    where: { id: payload.id },
+    select: { id: true, email: true, firstName: true, lastName: true, role: true },
+  });
+
+  return user;
 }
 
 export function requireRole(user: AuthUser | null, roles: UserRole[]) {
-  return !!user && roles.includes(user.role);
+  if (!user || !roles.includes(user.role)) {
+    return false;
+  }
+  return true;
 }

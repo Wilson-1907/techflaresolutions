@@ -1,128 +1,37 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { Mail, MapPin } from "lucide-react";
+import { useState } from "react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/Button";
-import { EmailLink } from "@/components/ui/EmailLink";
 import { company } from "@/data/site";
-import { ContactChannelWidgets } from "@/components/brand/ContactChannelWidgets";
-import {
-  buildEmailComposeLink,
-  buildMailtoSubject,
-  parseContactContext,
-  type MailtoContext,
-} from "@/lib/mailto";
-import { formSelectClass, formInputClass, formTextareaClass } from "@/lib/form-styles";
-
-const topicOptions: { value: string; label: string; context: MailtoContext }[] = [
-  { value: "general", label: "General inquiry", context: { type: "contact" } },
-  { value: "service", label: "Service / project", context: { type: "general", label: "Service inquiry" } },
-  { value: "product", label: "Product order", context: { type: "general", label: "Product inquiry" } },
-  { value: "solutions", label: "Solutions Center", context: { type: "solutions" } },
-  { value: "innovation", label: "Innovation Hub", context: { type: "innovation" } },
-  { value: "payment", label: "Payment / invoice", context: { type: "payment" } },
-  { value: "careers", label: "Careers", context: { type: "careers" } },
-  { value: "investor", label: "Investor relations", context: { type: "investor" } },
-];
-
-function topicFromUrlContext(context: MailtoContext): string {
-  switch (context.type) {
-    case "service":
-      return "service";
-    case "product":
-    case "order":
-      return "product";
-    case "solutions":
-      return "solutions";
-    case "innovation":
-      return "innovation";
-    case "payment":
-      return "payment";
-    case "careers":
-      return "careers";
-    case "investor":
-      return "investor";
-    default:
-      return "general";
-  }
-}
-
-function detailFromUrlContext(context: MailtoContext): string {
-  switch (context.type) {
-    case "service":
-      return context.service;
-    case "product":
-    case "order":
-      return context.product;
-    case "careers":
-      return context.role ?? "";
-    default:
-      return "";
-  }
-}
-
-function contextFromTopicAndDetail(topic: string, detail: string): MailtoContext {
-  const option = topicOptions.find((t) => t.value === topic);
-  if (!option) return { type: "contact" };
-  if (topic === "service" && detail.trim()) {
-    return { type: "service", service: detail.trim() };
-  }
-  if (topic === "product" && detail.trim()) {
-    return { type: "product", product: detail.trim() };
-  }
-  if (topic === "careers" && detail.trim()) {
-    return { type: "careers", role: detail.trim() };
-  }
-  return option.context;
-}
 
 export function ContactClient() {
-  const searchParams = useSearchParams();
-  const urlContext = useMemo(() => parseContactContext(searchParams), [searchParams]);
+  const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [form, setForm] = useState(() => {
-    const topic = topicFromUrlContext(urlContext);
-    const detail = detailFromUrlContext(urlContext);
-    return { topic, detail, body: "" };
-  });
-
-  const [subject, setSubject] = useState(() =>
-    buildMailtoSubject(contextFromTopicAndDetail(topicFromUrlContext(urlContext), detailFromUrlContext(urlContext)))
-  );
-  const [subjectEdited, setSubjectEdited] = useState(false);
-
-  const activeContext = useMemo(
-    () => contextFromTopicAndDetail(form.topic, form.detail),
-    [form.topic, form.detail]
-  );
-
-  const suggestedSubject = useMemo(() => buildMailtoSubject(activeContext), [activeContext]);
-
-  useEffect(() => {
-    setSubjectEdited(false);
-  }, [form.topic]);
-
-  useEffect(() => {
-    if (!subjectEdited) {
-      setSubject(suggestedSubject);
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      setSubmitted(true);
+    } catch {
+      alert("Failed to send message. Please try again.");
+    } finally {
+      setLoading(false);
     }
-  }, [suggestedSubject, subjectEdited]);
-
-  const mailtoHref = buildEmailComposeLink(activeContext, {
-    subject: subject.trim() || suggestedSubject,
-    body: form.body.trim(),
-  });
+  }
 
   return (
     <>
-      <PageHeader
-        title="Contact Us"
-        subtitle="Choose a topic, write your message, then email us"
-        badge="Get in Touch"
-      />
+      <PageHeader title="Contact Us" subtitle="We'd love to hear from you" badge="Get in Touch" />
 
       <section className="pb-24">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
@@ -130,116 +39,91 @@ export function ContactClient() {
             <div className="space-y-6">
               <GlassCard>
                 <Mail className="h-6 w-6 text-gold mb-3" />
-                <h3 className="font-semibold">Email (fastest)</h3>
+                <h3 className="font-semibold">Email</h3>
                 <p className="text-sm text-muted-foreground mt-1">{company.email}</p>
-                <EmailLink context={urlContext.type !== "contact" ? urlContext : { type: "contact" }} className="mt-3 w-full justify-center">
-                  <Mail className="h-4 w-4" /> Email us
-                </EmailLink>
               </GlassCard>
-
               <GlassCard>
-                <ContactChannelWidgets variant="contact" />
+                <Phone className="h-6 w-6 text-gold mb-3" />
+                <h3 className="font-semibold">Phone & WhatsApp</h3>
+                <p className="text-sm text-muted-foreground mt-1">{company.phoneLocal} / {company.phone}</p>
+                <a href={company.whatsappLink} className="text-sm text-life-green hover:underline mt-1 block">Chat on WhatsApp</a>
               </GlassCard>
 
               {company.offices.map((office) => (
                 <GlassCard key={office.city}>
                   <MapPin className="h-6 w-6 text-gold mb-3" />
-                  <h3 className="font-semibold">
-                    {office.city}, {office.country}
-                  </h3>
+                  <h3 className="font-semibold">{office.city}, {office.country}</h3>
                   <p className="text-sm text-muted-foreground mt-1">{office.address}</p>
                 </GlassCard>
               ))}
             </div>
 
             <GlassCard className="lg:col-span-2">
-              <h2 className="text-xl font-bold mb-2">Email TechFlare Solutions</h2>
-              <p className="text-sm text-muted-foreground mb-6">
-                Pick what your message is about, write your message, then click{" "}
-                <strong className="text-foreground">Email us</strong>.
-              </p>
-
-              <div className="space-y-5">
-                <div>
-                  <label htmlFor="contact-topic" className="block text-sm font-medium mb-1.5">
-                    What is this about?
-                  </label>
-                  <select
-                    id="contact-topic"
-                    value={form.topic}
-                    onChange={(e) => setForm({ ...form, topic: e.target.value })}
-                    className={formSelectClass}
-                  >
-                    {topicOptions.map((t) => (
-                      <option key={t.value} value={t.value}>
-                        {t.label}
-                      </option>
-                    ))}
-                  </select>
+              {submitted ? (
+                <div className="text-center py-12">
+                  <h2 className="text-2xl font-bold mb-2">Message Sent!</h2>
+                  <p className="text-muted-foreground">We&apos;ll get back to you within 24 hours.</p>
                 </div>
-
-                {(form.topic === "service" || form.topic === "product" || form.topic === "careers") && (
-                  <div>
-                    <label htmlFor="contact-detail" className="block text-sm font-medium mb-1.5">
-                      {form.topic === "service"
-                        ? "Which service?"
-                        : form.topic === "product"
-                          ? "Which product?"
-                          : "Which role?"}
-                    </label>
-                    <input
-                      id="contact-detail"
-                      value={form.detail}
-                      onChange={(e) => setForm({ ...form, detail: e.target.value })}
-                      placeholder={
-                        form.topic === "service"
-                          ? "e.g. Software Development"
-                          : form.topic === "product"
-                            ? "e.g. Career Compass"
-                            : "e.g. Software Engineer Intern"
-                      }
-                      className={formInputClass}
-                    />
-                  </div>
-                )}
-
-                <div>
-                  <label htmlFor="contact-subject" className="block text-sm font-medium mb-1.5">
-                    Email subject
-                  </label>
-                  <input
-                    id="contact-subject"
-                    value={subject}
-                    onChange={(e) => {
-                      setSubjectEdited(true);
-                      setSubject(e.target.value);
-                    }}
-                    className={formInputClass}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="contact-body" className="block text-sm font-medium mb-1.5">
-                    Message
-                  </label>
-                  <textarea
-                    id="contact-body"
-                    value={form.body}
-                    onChange={(e) => setForm({ ...form, body: e.target.value })}
-                    placeholder="Write your message here."
-                    className={formTextareaClass}
-                  />
-                </div>
-
-                <Button href={mailtoHref} className="w-full" size="lg">
-                  <Mail className="h-5 w-5" />
-                  Email us
-                </Button>
-
-                <p className="text-xs text-muted-foreground text-center">
-                  Sends to {company.email}
-                </p>
-              </div>
+              ) : (
+                <>
+                  <h2 className="text-xl font-bold mb-6">Send Us a Message</h2>
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">Name</label>
+                        <input
+                          required
+                          value={form.name}
+                          onChange={(e) => setForm({ ...form, name: e.target.value })}
+                          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">Email</label>
+                        <input
+                          required
+                          type="email"
+                          value={form.email}
+                          onChange={(e) => setForm({ ...form, email: e.target.value })}
+                          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gold"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">Phone</label>
+                        <input
+                          value={form.phone}
+                          onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">Subject</label>
+                        <input
+                          required
+                          value={form.subject}
+                          onChange={(e) => setForm({ ...form, subject: e.target.value })}
+                          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gold"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1.5">Message</label>
+                      <textarea
+                        required
+                        rows={5}
+                        value={form.message}
+                        onChange={(e) => setForm({ ...form, message: e.target.value })}
+                        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gold resize-none"
+                      />
+                    </div>
+                    <Button type="submit" disabled={loading}>
+                      {loading ? "Sending..." : "Send Message"}
+                    </Button>
+                  </form>
+                </>
+              )}
             </GlassCard>
           </div>
         </div>

@@ -25,7 +25,8 @@ export function HeroSection({ ready = true }: HeroSectionProps) {
   const ease = [0.22, 1, 0.36, 1] as const;
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden pt-20">
+    <section className="relative min-h-screen flex items-center overflow-hidden pt-20 mesh-bg">
+      <div className="absolute inset-0 grid-overlay opacity-30 pointer-events-none" />
       <GlobeAnimation />
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-24 lg:px-8">
@@ -38,9 +39,9 @@ export function HeroSection({ ready = true }: HeroSectionProps) {
             <span className="mb-3 block text-sm font-semibold uppercase tracking-widest text-white/70">
               {company.name}
             </span>
-            <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-deep-blue/60 px-4 py-1.5 text-xs sm:text-sm font-semibold uppercase tracking-[0.2em] text-gold">
+            <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-deep-blue/60 px-4 py-1.5 text-sm text-gold">
               <span className="h-2 w-2 animate-pulse rounded-full bg-life-green" />
-              {company.tagline}
+              Research · Innovation · Engineering · Deployment
             </span>
           </motion.div>
 
@@ -52,7 +53,7 @@ export function HeroSection({ ready = true }: HeroSectionProps) {
           >
             {company.tagline.split(" ").map((word, i) => (
               <span key={i}>
-                {word === "INNOVATIONS," || word === "SOLUTIONS" ? (
+                {word === "World-Class" ? (
                   <span className="bg-gradient-to-r from-gold-light to-gold-dark bg-clip-text text-transparent">
                     {word}{" "}
                   </span>
@@ -67,7 +68,16 @@ export function HeroSection({ ready = true }: HeroSectionProps) {
             initial={{ opacity: 0, y: 60 }}
             animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
             transition={{ duration: 0.9, ease, delay: ready ? 0.4 : 0 }}
-            className="mt-6 text-lg text-muted-foreground/80 max-w-2xl"
+            className="mt-6 text-xl text-gold/90"
+          >
+            {company.subtagline}
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 60 }}
+            animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
+            transition={{ duration: 0.9, ease, delay: ready ? 0.55 : 0 }}
+            className="mt-4 text-lg text-muted-foreground/80 max-w-2xl"
           >
             Bring us your problem or idea — {company.name} researches it, validates it, builds it,
             and helps turn it into a successful solution.
@@ -76,16 +86,16 @@ export function HeroSection({ ready = true }: HeroSectionProps) {
           <motion.div
             initial={{ opacity: 0, y: 60 }}
             animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
-            transition={{ duration: 0.9, ease, delay: ready ? 0.55 : 0 }}
+            transition={{ duration: 0.9, ease, delay: ready ? 0.7 : 0 }}
             className="mt-10 flex flex-wrap gap-4"
           >
-            <Button href="/login?redirect=/portal/innovation/submit" size="lg">
+            <Button href="/innovation-hub" size="lg">
               <Lightbulb className="h-5 w-5" />
-              Submit an idea
+              Submit an Idea
             </Button>
             <Button href="/solutions" variant="secondary" size="lg">
               <Wrench className="h-5 w-5" />
-              Solve my problem
+              Solve My Problem
             </Button>
             <Button href="/products" variant="outline" size="lg">
               <Compass className="h-5 w-5" />
@@ -98,7 +108,7 @@ export function HeroSection({ ready = true }: HeroSectionProps) {
         <motion.div
           initial={{ opacity: 0, y: 80 }}
           animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 80 }}
-            transition={{ delay: ready ? 0.7 : 0, duration: 1, ease }}
+          transition={{ delay: ready ? 0.95 : 0, duration: 1, ease }}
           className="mt-20 grid grid-cols-2 gap-4 sm:grid-cols-4"
         >
           {statItems.map((stat) => (

@@ -1,16 +1,21 @@
-import { NextRequest, NextResponse } from "next/server";
-import { proxyToBackend } from "@/lib/backend-proxy";
+import { NextResponse } from "next/server";
+import { getSessionFull } from "@/lib/auth";
 
-export async function GET(req: NextRequest) {
-  try {
-    const upstream = await proxyToBackend("/api/auth/me", { method: "GET", req });
-    const text = await upstream.text();
-    try {
-      return NextResponse.json(JSON.parse(text), { status: upstream.status });
-    } catch {
-      return NextResponse.json({ authenticated: false }, { status: 502 });
-    }
-  } catch {
-    return NextResponse.json({ authenticated: false }, { status: 503 });
+export async function GET() {
+  const user = await getSessionFull();
+  if (!user) {
+    return NextResponse.json({ authenticated: false }, { status: 401 });
   }
+  return NextResponse.json({
+    authenticated: true,
+    user: {
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+      points: user.points,
+      communityMember: user.communityMember,
+    },
+  });
 }

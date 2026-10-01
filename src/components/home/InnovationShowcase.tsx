@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckCircle2 } from "lucide-react";
-import { InnovationWorkflowSteps } from "@/components/innovation/InnovationWorkflowSteps";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { innovationWorkflow } from "@/data/site";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/Button";
 import { LiveStatCounter } from "@/components/ui/LiveStatCounter";
@@ -40,7 +40,7 @@ export function InnovationShowcase() {
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
             className="mt-4 text-3xl font-bold sm:text-4xl lg:text-5xl"
           >
-            The innovation program
+            The Innovation Hub
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 50 }}
@@ -54,7 +54,20 @@ export function InnovationShowcase() {
           </motion.p>
         </div>
 
-        <InnovationWorkflowSteps variant="compact" className="mb-12" />
+        <div className="grid gap-4 md:grid-cols-5 mb-12">
+          {innovationWorkflow.map((step, i) => (
+            <GlassCard key={step.step} delay={i * 0.1} className="relative text-center">
+              <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-gold to-deep-blue-mid text-sm font-bold">
+                {step.step}
+              </div>
+              <h3 className="font-semibold text-sm mb-2">{step.title}</h3>
+              <p className="text-xs text-muted-foreground">{step.description}</p>
+              {i < innovationWorkflow.length - 1 && (
+                <ArrowRight className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gold/50" />
+              )}
+            </GlassCard>
+          ))}
+        </div>
 
         <GlassCard className="border-gold/30 bg-gradient-to-r from-gold/10 to-gold-dark/10">
           <div className="grid md:grid-cols-2 gap-8 items-center">
@@ -74,8 +87,8 @@ export function InnovationShowcase() {
                 ))}
               </ul>
               <div className="flex flex-wrap gap-3">
-                <Button href="/innovation-hub">Learn about the program</Button>
-                <Button href="/login?redirect=/portal/innovation">Sign in to workspace</Button>
+                <Button href="/innovation-hub">Go to Innovation Hub</Button>
+                <Button href="/portal/innovation" variant="outline">Innovator Portal</Button>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">

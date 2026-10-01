@@ -3,7 +3,6 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/Button";
 import { TrendingUp, FileBarChart, DollarSign, Users } from "lucide-react";
-import { buildEmailComposeLink } from "@/lib/mailto";
 
 export const metadata: Metadata = {
   title: "Investor Relations",
@@ -43,7 +42,7 @@ export default function InvestorRelationsPage() {
               how ideas become world-class technology solutions. We offer participation in our Innovation Fund,
               which co-invests in validated ideas from our Innovation Hub.
             </p>
-            <Button href={buildEmailComposeLink({ type: "investor" })}>Email us — Investor Relations</Button>
+            <Button href="/contact">Contact Investor Relations</Button>
           </GlassCard>
 
           <div>
@@ -53,14 +52,7 @@ export default function InvestorRelationsPage() {
                 <GlassCard key={report}>
                   <h3 className="font-semibold">{report}</h3>
                   <p className="text-sm text-muted-foreground mt-1">Available upon request</p>
-                  <Button
-                    href={buildEmailComposeLink({ type: "general", label: `Report request: ${report}` })}
-                    variant="ghost"
-                    size="sm"
-                    className="mt-3"
-                  >
-                    Request via email →
-                  </Button>
+                  <Button variant="ghost" size="sm" className="mt-3">Request Access →</Button>
                 </GlassCard>
               ))}
             </div>

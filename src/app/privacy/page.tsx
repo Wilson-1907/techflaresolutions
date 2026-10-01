@@ -11,8 +11,7 @@ export default function PrivacyPage() {
             <p className="text-muted-foreground leading-relaxed">
               TechFlare Solutions is committed to protecting your privacy. We collect only the information
               necessary to provide our services, process idea submissions, and communicate with clients.
-              Sensitive personal data and submissions are encrypted at rest using AES-256 encryption.
-              Passwords are securely hashed. All traffic uses HTTPS. We do not sell personal information to third parties.
+              Your data is encrypted in transit and at rest. We do not sell personal information to third parties.
             </p>
           </GlassCard>
         </div>
