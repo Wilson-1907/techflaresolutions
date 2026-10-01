@@ -1,16 +1,25 @@
-import { redirect } from "next/navigation";
-import { getSessionFull } from "@/lib/auth";
-import { getPortalPathForRole } from "@/lib/portal-routes";
-import { InnovationHubPublic } from "./InnovationHubPublic";
+import { Metadata } from "next";
+import { InnovationHubClient } from "./InnovationHubClient";
 
-export default async function InnovationHubPage() {
-  const user = await getSessionFull();
-  if (user) {
-    if (user.role === "INNOVATOR") {
-      redirect("/portal/innovation/ai");
-    }
-    redirect(getPortalPathForRole(user.role));
-  }
+export const metadata: Metadata = {
+  title: "Innovation Hub — Submit Ideas & Inventions",
+  description:
+    "TechFlare Solutions Innovation Hub: submit ideas, inventions, and business concepts. We research, validate, and build world-class technology solutions.",
+  keywords: [
+    "Innovation Hub Kenya",
+    "submit invention",
+    "idea validation",
+    "TechFlare Solutions Innovation Hub",
+  ],
+  alternates: { canonical: "/innovation-hub" },
+  openGraph: {
+    title: "TechFlare Solutions Innovation Hub",
+    description: "Submit your idea or invention — we research, validate, and build it.",
+    url: "/innovation-hub",
+  },
+  robots: { index: true, follow: true },
+};
 
-  return <InnovationHubPublic />;
+export default function InnovationHubPage() {
+  return <InnovationHubClient />;
 }

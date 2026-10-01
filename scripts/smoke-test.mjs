@@ -29,9 +29,10 @@ const pages = [
   "/newsroom",
   "/privacy",
   "/products",
-  "/products/career-compass-cbe",
-  "/products/biometric-voting-system",
-  "/products/biometric-class-attendance",
+  "/products/biometric-attendance",
+  "/products/blockchain-voting",
+  "/products/examination-security",
+  "/products/smart-agriculture",
   "/register",
   "/research",
   "/services",
@@ -46,8 +47,6 @@ const pages = [
   "/portal/innovation",
   "/portal/innovation/submit",
   "/portal/innovation/tracking",
-  "/portal/employee",
-  "/pay",
 ];
 
 async function fetchPath(path, options = {}) {
@@ -119,7 +118,7 @@ async function main() {
         const r = await fetch(`${BASE}/api/products/order`, {
           method: "POST",
           headers: { "User-Agent": UA, "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({ productSlug: "career-compass-cbe" }),
+          body: JSON.stringify({ productSlug: "blockchain-voting" }),
         });
         return { path: "/api/products/order", status: r.status, ok: r.status === 400 || r.status === 401 || r.ok };
       },

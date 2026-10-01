@@ -1,44 +1,55 @@
 import { NextRequest, NextResponse } from "next/server";
-import { proxyToBackend } from "@/lib/backend-proxy";
+import { rateLimit, validateOrigin } from "@/lib/security";
+import { prisma } from "@/lib/db";
+import { hashPassword } from "@/lib/auth";
+import { z } from "zod";
+
+const schema = z.object({
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  email: z.string().email(),
+  password: z.string().min(8),
+  role: z.enum(["CLIENT", "INNOVATOR"]).default("CLIENT"),
+  company: z.string().optional(),
+});
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, 5, 60 * 60_000);
+  if (limited) return limited;
+
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
+  }
+
   try {
-    const body = await req.text();
-    const upstream = await proxyToBackend("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body,
-      req,
-    });
-    const text = await upstream.text();
-    try {
-      return NextResponse.json(JSON.parse(text), { status: upstream.status });
-    } catch {
-      const snippet = text.trim().slice(0, 120);
-      return NextResponse.json(
-        {
-          error:
-            snippet.includes("DNS") || snippet.includes("hostname")
-              ? "Backend URL misconfigured on Vercel. Set NEXT_PUBLIC_API_URL to https://techflaresolutionsback.onrender.com"
-              : "Registration service unavailable",
-        },
-        { status: 502 }
-      );
+    const body = await req.json();
+    const data = schema.parse(body);
+
+    const existing = await prisma.user.findUnique({ where: { email: data.email } });
+    if (existing) {
+      return NextResponse.json({ error: "Email already registered" }, { status: 400 });
     }
-  } catch (err) {
-    const isTimeout = err instanceof Error && err.name === "AbortError";
-    const isConfig =
-      err instanceof Error &&
-      /NEXT_PUBLIC_API_URL|BACKEND_URL|backend deployment/i.test(err.message);
-    return NextResponse.json(
-      {
-        error: isTimeout
-          ? "Registration timed out. Your account may have been created — open the OTP page or try signing in."
-          : isConfig
-            ? "Backend URL not set on Vercel. Add NEXT_PUBLIC_API_URL=https://techflaresolutionsback.onrender.com"
-            : "Registration service unavailable. Check that the backend is running on Render.",
+
+    const passwordHash = await hashPassword(data.password);
+    const user = await prisma.user.create({
+      data: {
+        email: data.email,
+        passwordHash,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        role: data.role,
+        company: data.company,
       },
-      { status: 503 }
-    );
+    });
+
+    return NextResponse.json({
+      message: "Account created successfully",
+      user: { id: user.id, email: user.email, role: user.role },
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+    }
+    return NextResponse.json({ error: "Registration failed" }, { status: 500 });
   }
 }

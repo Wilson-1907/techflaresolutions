@@ -4,41 +4,19 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { GlassCard } from "@/components/ui/GlassCard";
+import { prisma } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
 import { newsCategoryLabels } from "@/lib/news";
-import { serverBackendFetch } from "@/lib/backend-fetch";
-import { getOfficialNewsBySlug } from "@/data/official-content";
 
 export const dynamic = "force-dynamic";
 
 type Props = { params: Promise<{ slug: string }> };
 
-type Article = {
-  title: string;
-  excerpt: string;
-  content: string;
-  category: string;
-  authorName?: string;
-  publishedAt?: string;
-};
-
-async function loadArticle(slug: string): Promise<Article | null> {
-  const official = getOfficialNewsBySlug(slug);
-  if (official) return official;
-
-  try {
-    const res = await serverBackendFetch(`/api/news/${slug}`);
-    if (!res.ok) return null;
-    const { article } = await res.json();
-    return article ?? null;
-  } catch {
-    return null;
-  }
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const article = await loadArticle(slug);
+  const article = await prisma.newsArticle.findFirst({
+    where: { slug, published: true },
+  });
   if (!article) return { title: "News" };
   return {
     title: article.title,
@@ -48,7 +26,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function NewsArticlePage({ params }: Props) {
   const { slug } = await params;
-  const article = await loadArticle(slug);
+  const article = await prisma.newsArticle.findFirst({
+    where: { slug, published: true },
+  });
+
   if (!article) notFound();
 
   return (
@@ -70,7 +51,7 @@ export default async function NewsArticlePage({ params }: Props) {
 
           <GlassCard>
             <p className="text-sm text-muted-foreground mb-6">
-              {article.publishedAt ? formatDate(article.publishedAt) : ""}
+              {formatDate(article.publishedAt)}
               {article.authorName ? ` · ${article.authorName}` : ""}
             </p>
             <p className="text-lg text-gold/90 mb-8">{article.excerpt}</p>

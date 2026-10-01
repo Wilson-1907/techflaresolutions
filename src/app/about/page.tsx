@@ -1,12 +1,27 @@
-import Image from "next/image";
 import { Metadata } from "next";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { GlassCard } from "@/components/ui/GlassCard";
-import { company, coreValues, founder } from "@/data/site";
+import { company, coreValues, leadership } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: "About",
-  description: "Learn about TechFlare Solutions — our mission, vision, values, and founder.",
+  title: "About TechFlare Solutions",
+  description:
+    "Learn about TechFlare Solutions — our mission, vision, values, and leadership. Innovation, research, and engineering company based in Kenya (Karatina & Nyeri).",
+  keywords: [
+    "About TechFlare Solutions",
+    "technology company Kenya",
+    "software innovation Kenya",
+    "TechFlare Solutions mission",
+  ],
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "About TechFlare Solutions",
+    description:
+      "Mission, vision, and values of TechFlare Solutions — transforming ideas into world-class technology solutions.",
+    url: "/about",
+    type: "website",
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function AboutPage() {
@@ -50,28 +65,24 @@ export default function AboutPage() {
               Enterprises face problems without clear solutions. Researchers lack the engineering capacity to commercialize discoveries.
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              TechFlare Solutions was founded on {company.founded} by {founder.name} to close this gap. We combine rigorous research methodology, world-class engineering,
+              TechFlare Solutions was founded to close this gap. We combine rigorous research methodology, world-class engineering,
               and a genuine passion for innovation to transform ideas into solutions that matter. We don&apos;t just build software —
-              we partner with visionaries to change industries.
+              we partner with visionaries to change industries. Based in Kenya with offices in Karatina and Nyeri, we serve clients
+              across Africa and beyond.
             </p>
           </GlassCard>
 
           <div>
-            <h2 className="text-2xl font-bold mb-8 text-center">Founder</h2>
-            <GlassCard className="max-w-md mx-auto text-center">
-              <div className="relative mx-auto h-48 w-40 overflow-hidden rounded-2xl border-2 border-gold/30">
-                <Image
-                  src={founder.image}
-                  alt={founder.name}
-                  fill
-                  className="object-cover object-top"
-                  sizes="160px"
-                />
-              </div>
-              <h3 className="mt-5 text-xl font-bold">{founder.name}</h3>
-              <p className="text-gold text-sm mt-1">{founder.role}</p>
-              <p className="mt-3 text-sm text-muted-foreground">{founder.bio}</p>
-            </GlassCard>
+            <h2 className="text-2xl font-bold mb-8 text-center">Leadership</h2>
+            <div className="max-w-2xl mx-auto">
+              {leadership.map((leader, i) => (
+                <GlassCard key={leader.name} delay={i * 0.1} className="text-center">
+                  <h3 className="font-semibold text-xl">{leader.name}</h3>
+                  <p className="text-gold text-sm mt-1">{leader.role}</p>
+                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{leader.bio}</p>
+                </GlassCard>
+              ))}
+            </div>
           </div>
         </div>
       </section>

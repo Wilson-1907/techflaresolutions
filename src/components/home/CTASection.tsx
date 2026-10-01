@@ -4,8 +4,6 @@ import { motion } from "framer-motion";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { company } from "@/data/site";
 import { Button } from "@/components/ui/Button";
-import { EmailLink } from "@/components/ui/EmailLink";
-import { buildEmailComposeLink } from "@/lib/mailto";
 
 export function CTASection() {
   return (
@@ -24,17 +22,12 @@ export function CTASection() {
               Whether you have an idea, a problem, or a vision — TechFlare Solutions is ready to partner with you.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Button href="/login?redirect=/portal/innovation/submit" size="lg">Submit an idea</Button>
-              <Button href="/solutions" variant="secondary" size="lg">Solve my problem</Button>
-              <Button href={buildEmailComposeLink({ type: "solutions" })} variant="outline" size="lg">
-                Email us
-              </Button>
+              <Button href="/innovation-hub" size="lg">Submit an Idea</Button>
+              <Button href="/solutions" variant="secondary" size="lg">Solve My Problem</Button>
+              <Button href="/contact" variant="outline" size="lg">Contact Us</Button>
             </div>
             <div className="mt-10 flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
-              <EmailLink context={{ type: "contact" }} className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-gold" />
-                {company.email}
-              </EmailLink>
+              <span className="flex items-center gap-2"><Mail className="h-4 w-4 text-gold" />{company.email}</span>
               <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-gold" />{company.phone}</span>
               <span className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gold" />{company.offices[0].city}, {company.offices[0].country}</span>
             </div>

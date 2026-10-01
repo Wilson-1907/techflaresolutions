@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { Mail, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { company, navLinks } from "@/data/site";
-import { EmailLink } from "@/components/ui/EmailLink";
-import { ContactChannelWidgets } from "@/components/brand/ContactChannelWidgets";
+import { Logo } from "@/components/brand/Logo";
 
 export function Footer() {
   return (
@@ -10,9 +9,10 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="font-bold text-gold text-sm mb-1">{company.name}</p>
-            <p className="text-xs text-gold/80 mb-2">{company.tagline}</p>
-            <p className="text-sm text-muted-foreground leading-relaxed">{company.mission}</p>
+            <Logo size="sm" href="/" className="mb-4" showName />
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {company.brandStatement}
+            </p>
           </div>
 
           <div>
@@ -29,29 +29,16 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 font-semibold text-gold">Member access</h3>
-            <p className="text-xs text-muted-foreground mb-3">
-              Sign in for your private workspace — separate from this public website.
-            </p>
+            <h3 className="mb-4 font-semibold text-gold">Portals</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/portal/client" className="text-sm text-muted-foreground hover:text-gold transition-colors">
-                  Client workspace
+                  Client Portal
                 </Link>
               </li>
               <li>
                 <Link href="/portal/innovation" className="text-sm text-muted-foreground hover:text-gold transition-colors">
-                  Innovator workspace
-                </Link>
-              </li>
-              <li>
-                <Link href="/portal/employee" className="text-sm text-muted-foreground hover:text-gold transition-colors">
-                  Employee workspace
-                </Link>
-              </li>
-              <li>
-                <Link href="/newsroom" className="text-sm text-muted-foreground hover:text-gold transition-colors">
-                  Newsroom
+                  Innovation Portal
                 </Link>
               </li>
               <li>
@@ -72,9 +59,11 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Mail className="h-4 w-4 text-gold" />
-                <EmailLink context={{ type: "contact" }}>
-                  {company.email}
-                </EmailLink>
+                {company.email}
+              </li>
+              <li className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Phone className="h-4 w-4 text-gold" />
+                {company.phone}
               </li>
               <li className="flex items-start gap-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 text-life-green mt-0.5" />
@@ -84,9 +73,7 @@ export function Footer() {
           </div>
         </div>
 
-        <ContactChannelWidgets variant="footer" className="mt-10" />
-
-        <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-gold/20 pt-8 md:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-gold/20 pt-8 md:flex-row">
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} {company.name}. All rights reserved.
           </p>

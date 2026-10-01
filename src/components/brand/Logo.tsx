@@ -4,19 +4,19 @@ import { company } from "@/data/site";
 import { cn } from "@/lib/utils";
 
 interface LogoProps {
-  size?: "xs" | "sm" | "md";
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
   className?: string;
   href?: string;
   priority?: boolean;
-  /** Full logo image already includes wordmark — keep false unless you need text beside a mark-only asset */
   showName?: boolean;
 }
 
-/** Compact header sizes — full logo asset includes name + tagline; keep small in nav only. */
 const sizes = {
-  xs: { width: 96, height: 32, className: "h-8 w-auto max-h-8" },
-  sm: { width: 112, height: 36, className: "h-9 w-auto max-h-9" },
-  md: { width: 128, height: 40, className: "h-10 w-auto max-h-10" },
+  xs: { width: 80, height: 80, className: "h-10 w-auto" },
+  sm: { width: 120, height: 120, className: "h-14 w-auto" },
+  md: { width: 160, height: 160, className: "h-16 w-auto" },
+  lg: { width: 220, height: 220, className: "h-24 w-auto" },
+  xl: { width: 280, height: 280, className: "h-32 w-auto" },
 };
 
 export function CompanyWordmark({ className }: { className?: string }) {
@@ -29,11 +29,11 @@ export function CompanyWordmark({ className }: { className?: string }) {
 }
 
 export function Logo({
-  size = "xs",
+  size = "sm",
   className,
   href = "/",
   priority = false,
-  showName = false,
+  showName = true,
 }: LogoProps) {
   const { width, height, className: sizeClass } = sizes[size];
 
@@ -41,12 +41,11 @@ export function Logo({
     <>
       <Image
         src="/logo.png"
-        alt={`${company.name} — ${company.tagline}`}
+        alt={`${company.name} — ${company.subtagline}`}
         width={width}
         height={height}
         priority={priority}
-        unoptimized
-        className={cn(sizeClass, "object-contain object-left bg-transparent shrink-0", className)}
+        className={cn(sizeClass, "object-contain", className)}
       />
       {showName && <CompanyWordmark className="ml-2 text-[10px] sm:text-sm leading-tight" />}
     </>
@@ -54,11 +53,11 @@ export function Logo({
 
   if (href) {
     return (
-      <Link href={href} className="inline-flex shrink-0 items-center max-w-[7.5rem] sm:max-w-[9rem]" aria-label={company.name}>
+      <Link href={href} className="inline-flex shrink-0 items-center" aria-label={company.name}>
         {content}
       </Link>
     );
   }
 
-  return <span className="inline-flex shrink-0 items-center max-w-[9rem]">{content}</span>;
+  return <span className="inline-flex shrink-0 items-center">{content}</span>;
 }

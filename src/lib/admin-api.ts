@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getAdminApiKey } from "@/lib/env";
 
 export function verifyAdminApiKey(req: NextRequest): boolean {
-  const expected = process.env.ADMIN_API_KEY?.trim();
+  const expected = getAdminApiKey();
   if (!expected) return false;
   return req.headers.get("x-admin-api-key") === expected;
 }

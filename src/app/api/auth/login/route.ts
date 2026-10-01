@@ -1,50 +1,59 @@
 import { NextRequest, NextResponse } from "next/server";
-import { proxyToBackend } from "@/lib/backend-proxy";
-import { setAuthCookieOnResponse } from "@/lib/auth-cookie";
+import { rateLimit, validateOrigin } from "@/lib/security";
+import { prisma } from "@/lib/db";
+import { verifyPassword, signToken } from "@/lib/auth";
+import { z } from "zod";
 
-function attachSessionCookie(response: NextResponse, upstream: Response, data: Record<string, unknown>) {
-  if (!upstream.ok) return;
-  if (typeof data.token === "string") {
-    setAuthCookieOnResponse(response, data.token);
-  }
-}
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1),
+});
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, 10, 15 * 60_000);
+  if (limited) return limited;
+
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
+  }
+
   try {
-    const body = await req.text();
-    const upstream = await proxyToBackend("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body,
-      req,
-    });
-    const text = await upstream.text();
-    let data: Record<string, unknown>;
-    try {
-      data = JSON.parse(text) as Record<string, unknown>;
-    } catch {
-      const snippet = text.trim().slice(0, 80);
-      return NextResponse.json(
-        {
-          error: snippet === "Forbidden"
-            ? "Login blocked by server security. Please refresh and try again."
-            : "Login service unavailable. Backend returned an invalid response.",
-        },
-        { status: upstream.status >= 400 ? upstream.status : 502 }
-      );
+    const body = await req.json();
+    const data = schema.parse(body);
+
+    const user = await prisma.user.findUnique({ where: { email: data.email } });
+    if (!user || !(await verifyPassword(data.password, user.passwordHash))) {
+      return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }
-    const response = NextResponse.json(data, { status: upstream.status });
-    attachSessionCookie(response, upstream, data);
-    return response;
-  } catch (err) {
-    const isTimeout = err instanceof Error && err.name === "AbortError";
-    return NextResponse.json(
-      {
-        error: isTimeout
-          ? "Login timed out. The server may be waking up — try again in 30 seconds."
-          : "Login service unavailable. Check that the backend is running on Render.",
+
+    const token = signToken({
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+    });
+
+    const response = NextResponse.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
       },
-      { status: 503 }
-    );
+    });
+
+    response.cookies.set("auth_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7,
+      path: "/",
+    });
+
+    return response;
+  } catch {
+    return NextResponse.json({ error: "Login failed" }, { status: 500 });
   }
 }

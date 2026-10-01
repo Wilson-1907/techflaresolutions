@@ -15,7 +15,7 @@ export interface LiveStats {
 
 const defaultStats: LiveStats = {
   projectsDelivered: 500,
-  industriesServed: 35,
+  industriesServed: 50,
   ideasValidated: 200,
   clientSatisfaction: 99.9,
   ideasSubmitted: 1200,

@@ -7,10 +7,8 @@ import { InnovationShowcase } from "@/components/home/InnovationShowcase";
 import { ServicesPreview } from "@/components/home/ServicesPreview";
 import { ProductsPreview } from "@/components/home/ProductsPreview";
 import { CTASection } from "@/components/home/CTASection";
-import { AccountWhySection } from "@/components/auth/AccountWhySection";
-import { AnimatedMarquee } from "@/components/home/AnimatedMarquee";
-import { TestimonialsSection } from "@/components/home/TestimonialsSection";
-import { NewsPreviewSection } from "@/components/home/NewsPreviewSection";
+import { BrandIdentitySection } from "@/components/home/BrandIdentitySection";
+import { PortfolioShowcase } from "@/components/home/PortfolioShowcase";
 import { RevealUp } from "@/components/ui/RevealUp";
 import { cn } from "@/lib/utils";
 import { useClientReady, useIntroSeen } from "@/lib/use-client-ready";
@@ -38,26 +36,22 @@ export default function HomePage() {
 
       <div className={cn(!landingReady && "invisible")}>
         <HeroSection ready={landingReady} />
-        <AnimatedMarquee />
         <RevealUp>
           <InnovationShowcase />
         </RevealUp>
+        <RevealUp delay={0.05}>
+          <BrandIdentitySection />
+        </RevealUp>
         <RevealUp delay={0.1}>
+          <PortfolioShowcase />
+        </RevealUp>
+        <RevealUp delay={0.15}>
           <ServicesPreview />
         </RevealUp>
-        <RevealUp delay={0.12}>
+        <RevealUp delay={0.2}>
           <ProductsPreview />
         </RevealUp>
-        <RevealUp delay={0.13}>
-          <NewsPreviewSection />
-        </RevealUp>
-        <RevealUp delay={0.14}>
-          <TestimonialsSection />
-        </RevealUp>
-        <RevealUp delay={0.18}>
-          <AccountWhySection />
-        </RevealUp>
-        <RevealUp delay={0.2}>
+        <RevealUp delay={0.25}>
           <CTASection />
         </RevealUp>
       </div>

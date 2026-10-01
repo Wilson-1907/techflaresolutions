@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Lock, LogIn, Users } from "lucide-react";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/Button";
-import { company, accountVsCommunity } from "@/data/site";
+import { company } from "@/data/site";
 
 interface AuthUser {
   id: string;
@@ -62,31 +62,18 @@ export function AuthGate({
       : "/login";
 
     return (
-      <GlassCard className="max-w-2xl mx-auto border-gold/30 py-10 px-6 sm:py-12 sm:px-10">
-        <div className="text-center">
-          <Lock className="h-12 w-12 text-gold mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-2">{title}</h2>
-          <p className="text-muted-foreground mb-6">{description}</p>
-        </div>
-        <p className="text-sm font-semibold text-gold mb-3">{accountVsCommunity.accountTitle}</p>
-        <ul className="mb-8 space-y-2.5 text-sm text-muted-foreground">
-          {accountVsCommunity.accountReasons.map((reason) => (
-            <li key={reason} className="flex gap-2">
-              <span className="text-life-green shrink-0">•</span>
-              <span>{reason}</span>
-            </li>
-          ))}
-        </ul>
-        <p className="text-xs text-muted-foreground mb-6 text-center">
-          Browsing {company.name} is open to everyone. Sign in to use your private portal and tools.
+      <GlassCard className="max-w-xl mx-auto text-center border-gold/30 py-12 px-8">
+        <Lock className="h-12 w-12 text-gold mx-auto mb-4" />
+        <h2 className="text-2xl font-bold mb-2">{title}</h2>
+        <p className="text-muted-foreground mb-6">{description}</p>
+        <p className="text-sm text-muted-foreground mb-6">
+          Browsing {company.name} is open to everyone. To submit ideas, use AI tools, or access client resources — sign in first.
         </p>
         <div className="flex flex-wrap justify-center gap-3">
-          <Button href={loginHref} size="lg">
-            <LogIn className="h-4 w-4" /> {accountVsCommunity.accountCta}
+          <Button href={loginHref}>
+            <LogIn className="h-4 w-4" /> Sign In
           </Button>
-          <Button href="/register" variant="outline" size="lg">
-            Create account
-          </Button>
+          <Button href="/register" variant="outline">Create Account</Button>
         </div>
       </GlassCard>
     );

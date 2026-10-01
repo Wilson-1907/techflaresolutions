@@ -15,7 +15,6 @@ export function ServicesPreview() {
             <h2 className="mt-2 text-3xl font-bold sm:text-4xl">Our Services</h2>
             <p className="mt-2 text-muted-foreground max-w-xl">
               End-to-end technology services from research and consulting to deployment and support.
-              Open any card on the services page to see how we solve it.
             </p>
           </div>
           <Button href="/services" variant="outline" className="mt-4 md:mt-0">
