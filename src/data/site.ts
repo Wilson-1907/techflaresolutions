@@ -96,7 +96,11 @@ export const leadership = [
   },
 ];
 
-/** Featured client work & modern digital templates we ship. */
+/** Shown with client permission on Work pages and homepage portfolio. */
+export const showcaseConsentNote =
+  "Projects listed as delivered are shown with the clients’ acceptance to showcase their work. TechFlare Solutions only publishes named client examples after the client has agreed that we may feature the project publicly as evidence of what we deliver.";
+
+/** Delivered client work (live or completed) — not templates. */
 export const portfolioProjects = [
   {
     slug: "st-gabriel-mission-schools",
@@ -104,61 +108,115 @@ export const portfolioProjects = [
     client: "St Gabriel Mission Schools",
     domain: "https://stgabrielsmissionschools.sc.ke",
     category: "Education · Institutional Website",
+    kind: "delivered" as const,
+    status: "Live",
+    year: "2025",
     summary:
       "A modern school website for St Gabriel Mission Schools — admissions, campus life, academics, and parent communication in a clean digital experience.",
+    outcomes: [
+      "Live institutional site on stgabrielsmissionschools.sc.ke",
+      "Mobile-first admissions and campus storytelling",
+      "SEO-ready structure for school discovery in Kenya",
+    ],
     tags: ["Next.js", "School CMS", "Responsive", "SEO"],
     featured: true,
+    showcaseConsent: true,
     image:
       "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80&auto=format&fit=crop",
   },
   {
-    slug: "corporate-innovation-portal",
-    title: "Corporate Innovation Portal",
-    client: "Enterprise template",
-    domain: "",
-    category: "Template · SaaS Portal",
+    slug: "client-delivery-portal",
+    title: "Client Delivery Portal",
+    client: "TechFlare Solutions platform clients",
+    domain: "/portal/client",
+    category: "SaaS · Client Workspace",
+    kind: "delivered" as const,
+    status: "In production",
+    year: "2025",
     summary:
-      "Modern client and innovator portals with dashboards, project tracking, and secure role-based access — ready to brand for your organization.",
-    tags: ["Dashboard", "Auth", "Portal UX"],
+      "Secure client workspace for projects, invoices, documents, and support — the same delivery standard we roll out for organizations that need a private portal.",
+    outcomes: [
+      "Role-based access for clients and admins",
+      "Project tracking and document handoff",
+      "Integrated with TechFlare Solutions operations",
+    ],
+    tags: ["Auth", "Dashboard", "Portal UX", "Secure"],
     featured: true,
+    showcaseConsent: true,
     image:
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80&auto=format&fit=crop",
   },
   {
-    slug: "product-launch-site",
-    title: "Product Launch Site",
-    client: "Template",
-    domain: "",
-    category: "Template · Marketing",
+    slug: "innovation-hub-platform",
+    title: "Innovation Hub Platform",
+    client: "TechFlare Solutions Innovation Program",
+    domain: "/innovation-hub",
+    category: "Platform · Idea Pipeline",
+    kind: "delivered" as const,
+    status: "Live",
+    year: "2025",
     summary:
-      "High-converting product marketing template with pricing, feature grids, and order flows for TechFlare Solutions digital products.",
-    tags: ["Landing", "Conversion", "Commerce"],
-    featured: false,
+      "End-to-end innovation pipeline — idea submission, review stages, and innovator tracking — proof that we build real product workflows, not just marketing pages.",
+    outcomes: [
+      "Structured idea → review → decision workflow",
+      "Signed-in innovator submissions",
+      "Admin-ready pipeline for program teams",
+    ],
+    tags: ["Workflow", "Portal", "R&D", "Product"],
+    featured: true,
+    showcaseConsent: true,
     image:
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80&auto=format&fit=crop",
   },
 ];
 
+/**
+ * Modern templates = capability evidence.
+ * These are not client claims; they show the digital products and UX systems we can ship.
+ */
 export const modernTemplates = [
   {
     title: "School & Mission Website",
-    description: "Admissions, news, galleries, and contact — built for Kenyan schools and missions.",
+    description:
+      "Admissions, news, galleries, academics, and contact — the pattern behind institutional sites like St Gabriel Mission Schools.",
+    evidence: "Evidence we ship polished education websites end-to-end.",
+    stack: ["Next.js", "SEO", "Mobile-first", "CMS-ready"],
     href: "/work/st-gabriel-mission-schools",
   },
   {
     title: "Innovation Hub Portal",
-    description: "Idea submission, review pipelines, and innovator tracking for R&D programs.",
+    description: "Idea submission, review pipelines, and innovator tracking for R&D and community programs.",
+    evidence: "Evidence we build multi-step product workflows with auth.",
+    stack: ["Auth", "Dashboards", "Pipelines", "Notifications"],
     href: "/innovation-hub",
   },
   {
     title: "Solutions Commerce",
-    description: "Product catalog, plans, and email-order flows for digital products.",
+    description: "Product catalog, plans, and email-order flows for digital products and services.",
+    evidence: "Evidence we can launch conversion-ready product pages.",
+    stack: ["Catalog", "Pricing", "CTA flows", "Lead capture"],
     href: "/products",
   },
   {
     title: "Enterprise Client Portal",
-    description: "Projects, invoices, documents, and support in one secure workspace.",
+    description: "Projects, invoices, documents, and support in one secure branded workspace.",
+    evidence: "Evidence we deliver private portals clients actually use.",
+    stack: ["RBAC", "Documents", "Billing views", "Support"],
     href: "/portal/client",
+  },
+  {
+    title: "Product Launch Landing",
+    description: "High-converting launch pages with feature grids, pricing, and clear next actions.",
+    evidence: "Evidence of modern marketing templates we brand for launches.",
+    stack: ["Landing UX", "Motion", "Conversion", "Brand systems"],
+    href: "/products",
+  },
+  {
+    title: "Admin Operations Console",
+    description: "CRM, finance views, projects, and operations tools for running a digital business.",
+    evidence: "Evidence we build serious back-office systems, not only public sites.",
+    stack: ["Admin UX", "Data tables", "Ops workflows", "Security"],
+    href: "/contact",
   },
 ];
 
