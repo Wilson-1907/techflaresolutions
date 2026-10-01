@@ -1,0 +1,66 @@
+import { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { GlassCard } from "@/components/ui/GlassCard";
+import { prisma } from "@/lib/db";
+import { formatDate } from "@/lib/utils";
+import { newsCategoryLabels } from "@/lib/news";
+
+export const dynamic = "force-dynamic";
+
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const article = await prisma.newsArticle.findFirst({
+    where: { slug, published: true },
+  });
+  if (!article) return { title: "News" };
+  return {
+    title: article.title,
+    description: article.excerpt,
+  };
+}
+
+export default async function NewsArticlePage({ params }: Props) {
+  const { slug } = await params;
+  const article = await prisma.newsArticle.findFirst({
+    where: { slug, published: true },
+  });
+
+  if (!article) notFound();
+
+  return (
+    <>
+      <PageHeader
+        title={article.title}
+        subtitle={newsCategoryLabels[article.category] || article.category}
+        badge="Newsroom"
+      />
+
+      <section className="pb-24">
+        <div className="mx-auto max-w-3xl px-4 lg:px-8">
+          <Link
+            href="/newsroom"
+            className="inline-flex items-center gap-2 text-sm text-gold hover:underline mb-6"
+          >
+            <ArrowLeft className="h-4 w-4" /> Back to Newsroom
+          </Link>
+
+          <GlassCard>
+            <p className="text-sm text-muted-foreground mb-6">
+              {formatDate(article.publishedAt)}
+              {article.authorName ? ` · ${article.authorName}` : ""}
+            </p>
+            <p className="text-lg text-gold/90 mb-8">{article.excerpt}</p>
+            <div className="prose prose-invert max-w-none whitespace-pre-wrap text-muted-foreground leading-relaxed">
+              {article.content}
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+    </>
+  );
+}
