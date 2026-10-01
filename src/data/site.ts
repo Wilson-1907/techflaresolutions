@@ -17,6 +17,42 @@ export const company = {
   whatsapp: "254769227291",
   whatsappLink: "https://wa.me/254769227291",
   communityWhatsApp: "https://chat.whatsapp.com/HaexOE7SYvMJBdjruVmDJo",
+  social: {
+    handle: "techflare_solutions",
+    links: [
+      {
+        id: "instagram",
+        name: "Instagram",
+        handle: "techflare_solutions",
+        href: "https://www.instagram.com/techflare_solutions/",
+      },
+      {
+        id: "facebook",
+        name: "Facebook",
+        handle: "techflare_solutions",
+        href: "https://www.facebook.com/profile.php?id=61592088802525",
+      },
+      {
+        id: "tiktok",
+        name: "TikTok",
+        handle: "techflare_solutions",
+        href: "https://www.tiktok.com/@techflare_solutions",
+      },
+      { id: "x", name: "X", handle: "techflare_solutions", href: "https://x.com/stechflare" },
+      {
+        id: "linkedin",
+        name: "LinkedIn",
+        handle: "techflare_solutions",
+        href: "https://www.linkedin.com/company/techflaresolutionss",
+      },
+      {
+        id: "youtube",
+        name: "YouTube",
+        handle: "techflare_solutions",
+        href: "https://www.youtube.com/@techflare_solutions",
+      },
+    ],
+  },
   country: "Kenya",
   locationNote: "Kenya — Online & physical offices",
   offices: [
