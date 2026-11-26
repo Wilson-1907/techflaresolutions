@@ -401,12 +401,86 @@ export function matchNavigationConfirmation(
   };
 }
 
+/** Greetings, thanks, help menu — answered locally so "hello" never becomes "great question about hello". */
+export function matchConversationalIntent(message: string): ChatResolution | null {
+  const t = message.trim();
+  if (!t) return null;
+  const lower = t.toLowerCase();
+
+  if (
+    /^(hi|hello|hey|hola|habari|sasa|good\s*(morning|afternoon|evening)|howdy|yo)([\s,!.?]|$)/i.test(
+      t
+    ) ||
+    /^(hi|hello|hey)[\s,]+(there|techflare|team|ai|bot)?[\s!.]*$/i.test(t)
+  ) {
+    return {
+      reply:
+        `Hello! Welcome to ${company.name}. I can help you submit an idea, request a solution, find products, pay an invoice, or join our community. ` +
+        `Try asking “How do I submit my idea?” or “What services do you offer?” — or say “take me to contact” to reach our team.`,
+    };
+  }
+
+  if (
+    /^(thanks|thank\s*you|thx|ty|asante|appreciate\s*it)([\s,!.?]|$)/i.test(t) ||
+    /^(thanks|thank\s*you).{0,40}$/i.test(t)
+  ) {
+    return {
+      reply: `You're welcome! If you need anything else — ideas, products, billing, or careers — just ask. We're also at ${company.email} and WhatsApp ${company.phone}.`,
+    };
+  }
+
+  if (/^(bye|goodbye|see\s*you|later|exit|quit)([\s,!.?]|$)/i.test(t)) {
+    return {
+      reply: `Goodbye for now — glad you stopped by. Come back anytime, or reach us at ${company.email} / WhatsApp ${company.phone}.`,
+    };
+  }
+
+  if (
+    /^(help|menu|options|what\s+can\s+you\s+do|how\s+can\s+you\s+help)([\s?!.]|$)/i.test(t) ||
+    /what\s+can\s+(you|i)\s+(do|ask|help)/i.test(lower)
+  ) {
+    return {
+      reply:
+        `Here's what I can help with:\n` +
+        `• Submit an idea → Innovation Hub\n` +
+        `• Business problem / proposal → Solutions Center\n` +
+        `• Ready-made tools → Products\n` +
+        `• Pay invoice / M-Pesa → Client portal billing\n` +
+        `• Join community or careers → Community & Careers pages\n` +
+        `Say “take me to …” for any of those, or ask in plain English.`,
+    };
+  }
+
+  if (/^(who\s+are\s+you|what\s+are\s+you|are\s+you\s+(a\s+)?(bot|ai|human))/i.test(t)) {
+    return {
+      reply: `I'm the ${company.name} assistant — I guide you around our site with real company info (services, portals, payments, Innovation Hub). For complex projects our humans reply at ${company.email} or WhatsApp ${company.phone}.`,
+    };
+  }
+
+  if (/^(ok|okay|cool|great|nice|perfect|got\s*it|alright)([\s,!.?]|$)/i.test(t)) {
+    return {
+      reply: `Glad that helps. What would you like to do next — submit an idea, explore services, or talk to a human?`,
+    };
+  }
+
+  return null;
+}
+
 export function creativeFallback(message: string): string {
-  const topic = message.trim().slice(0, 60);
+  const cleaned = message.trim().replace(/\s+/g, " ");
+  const isShortNoise = cleaned.length < 3 || /^[^a-z0-9]+$/i.test(cleaned);
+
+  if (isShortNoise) {
+    return (
+      `I'm here to help with TechFlare services, products, Innovation Hub, billing, and careers. ` +
+      `Ask something like “What services do you offer?” or “How do I submit my idea?” — or WhatsApp us on ${company.phone}.`
+    );
+  }
+
   return (
-    `Great question${topic ? ` about "${topic}${message.length > 60 ? "…" : ""}"` : ""}! ` +
-    `Here are smart next steps: explore our Innovation Hub for ideas, Solutions Center for business problems, or Products for ready-made tools. ` +
-    `Our humans at ${company.email} or WhatsApp ${company.phone} love detailed questions — mention what you asked and we will follow up. ` +
-    `You can also say "take me to contact" or "how do I submit my innovation" and I will guide you step by step.`
+    `I may not have a perfect match for that yet, but I can still help. ` +
+    `Try Innovation Hub for ideas, Solutions Center for business problems, or Products for ready-made tools. ` +
+    `Our team at ${company.email} or WhatsApp ${company.phone} can follow up if you share more detail. ` +
+    `You can also say “take me to contact” or “how do I submit my innovation” and I'll guide you step by step.`
   );
 }

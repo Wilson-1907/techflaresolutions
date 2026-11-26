@@ -10,10 +10,12 @@ import {
   buildFollowUpMessage,
   buildFollowUpNotificationBody,
   matchKnowledge,
+  resolveChatResponse,
 } from "@/lib/ai-knowledge";
 import { company } from "@/data/site";
 import {
   creativeFallback,
+  matchConversationalIntent,
   matchNavigationConfirmation,
   matchNavigationIntent,
   type ChatAction,
@@ -284,21 +286,16 @@ export function AIAssistant() {
       return;
     }
 
+    // Prefer local resolution (greetings, nav, knowledge) before hitting the API.
+    const conversational = matchConversationalIntent(userText);
     const localNav = matchNavigationIntent(userText);
-    if (localNav) {
-      setMessages((prev) => [...prev, { role: "user", content: userText }]);
-      setInput("");
-      applyAssistantReply(localNav.reply, localNav.action);
-      setShowQuickMenu(false);
-      scheduleFollowUp();
-      return;
-    }
-
     const localKnowledge = matchKnowledge(userText);
-    if (localKnowledge) {
+    if (conversational || localNav || localKnowledge) {
+      const resolved =
+        conversational || localNav || { reply: localKnowledge as string };
       setMessages((prev) => [...prev, { role: "user", content: userText }]);
       setInput("");
-      applyAssistantReply(localKnowledge);
+      applyAssistantReply(resolved.reply, "action" in resolved ? resolved.action : undefined);
       setShowQuickMenu(false);
       scheduleFollowUp();
       return;
@@ -318,12 +315,15 @@ export function AIAssistant() {
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        const errMsg =
-          data.error ||
-          (res.status === 429
-            ? "Too many messages — please wait a moment and try again."
-            : `I'm reconnecting — meanwhile reach us at ${company.email} or WhatsApp ${company.phone}. Try asking again in a few seconds!`);
-        setMessages((prev) => [...prev, { role: "assistant", content: errMsg }]);
+        // Stay helpful offline — never dump a raw error as the only answer.
+        const offline = resolveChatResponse(userText);
+        const errHint =
+          res.status === 429
+            ? "Too many messages — please wait a moment and try again. "
+            : "";
+        applyAssistantReply(`${errHint}${offline.reply}`, offline.action);
+        setShowQuickMenu(false);
+        scheduleFollowUp();
         return;
       }
 
@@ -333,7 +333,10 @@ export function AIAssistant() {
       setShowQuickMenu(false);
       scheduleFollowUp();
     } catch {
-      applyAssistantReply(creativeFallback(userText));
+      const offline = resolveChatResponse(userText);
+      applyAssistantReply(offline.reply, offline.action);
+      setShowQuickMenu(false);
+      scheduleFollowUp();
     } finally {
       setLoading(false);
     }

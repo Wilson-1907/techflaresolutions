@@ -16,6 +16,7 @@ import {
 } from "@/data/policies";
 import {
   matchNavigationIntent,
+  matchConversationalIntent,
   creativeFallback,
   type ChatAction,
   type ChatResolution,
@@ -68,8 +69,13 @@ export const knowledgeTopics: { keywords: string[]; answer: string }[] = [
     answer: `We serve ${industries.length} industries including technology, e-commerce & retail, software & SaaS, fintech, healthcare, education, government, manufacturing, and more. Full list at /industries.`,
   },
   {
-    keywords: ["product", "voting", "biometric", "attendance", "career", "cbe", "order", "buy", "purchase"],
+    keywords: ["product", "voting", "biometric", "attendance", "career", "cbe", "order", "buy", "purchase", "pos", "point of sale"],
     answer: `TechFlare products: ${products.map((p) => `${p.title} (${p.status})`).join("; ")}. Career Compass is live at https://aipoweredcbeguide.vercel.app/. View all at /products.`,
+  },
+  {
+    keywords: ["pos system", "point of sale", "till system", "retail pos", "shop till"],
+    answer:
+      "Our Point of Sale (POS) system is in testing — built for Kenyan retailers with inventory, sales, and M-Pesa-friendly checkout flows. See /products for status and demos, or contact us to join a pilot.",
   },
   {
     keywords: ["voting system", "biometric voting", "election", "iebc"],
@@ -207,22 +213,43 @@ export const knowledgeTopics: { keywords: string[]; answer: string }[] = [
 
 export function matchKnowledge(message: string): string | null {
   const lower = message.toLowerCase().trim();
+  if (lower.length < 2) return null;
+
   let best: { score: number; answer: string } | null = null;
 
   for (const topic of knowledgeTopics) {
     let score = 0;
     for (const kw of topic.keywords) {
-      if (lower.includes(kw)) score += kw.length;
+      const needle = kw.toLowerCase();
+      // Prefer whole-word / phrase hits; short keywords need word boundaries.
+      if (needle.length <= 3) {
+        const re = new RegExp(`(?:^|[^a-z0-9])${escapeRegExp(needle)}(?:[^a-z0-9]|$)`, "i");
+        if (re.test(lower)) score += needle.length + 2;
+      } else if (lower.includes(needle)) {
+        score += needle.length;
+        if (lower.split(/\s+/).includes(needle) || lower.startsWith(needle)) {
+          score += 2;
+        }
+      }
     }
     if (score > 0 && (!best || score > best.score)) {
       best = { score, answer: topic.answer };
     }
   }
 
-  return best?.answer ?? null;
+  // Require a minimum signal so vague one-word chats don't latch onto weak keywords.
+  if (!best || best.score < 4) return null;
+  return best.answer;
+}
+
+function escapeRegExp(s: string) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 export function resolveChatResponse(message: string): ChatResolution {
+  const conversational = matchConversationalIntent(message);
+  if (conversational) return conversational;
+
   const nav = matchNavigationIntent(message);
   if (nav) return nav;
 
@@ -233,7 +260,11 @@ export function resolveChatResponse(message: string): ChatResolution {
 }
 
 export function buildFollowUpMessage(exactPreviousQuestion: string): string {
-  return `Hello again! You previously asked: "${exactPreviousQuestion}" — were you successful with that, or do you still need help?`;
+  const q = exactPreviousQuestion.trim();
+  if (/^(hi|hello|hey|thanks|thank you|bye|ok|okay)\b/i.test(q)) {
+    return `Still here if you need anything — ideas, products, billing, or careers. What would you like to do next?`;
+  }
+  return `Hello again! You previously asked: "${q}" — were you successful with that, or do you still need help?`;
 }
 
 export function buildFollowUpNotificationBody(exactPreviousQuestion: string): string {

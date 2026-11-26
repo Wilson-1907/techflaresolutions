@@ -10,7 +10,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:smoke": "node scripts/smoke-test.mjs"
+    "test:smoke": "node scripts/smoke-test.mjs",
+    "test:security": "node scripts/security-bands-test.mjs",
+    "test:chatbot": "node scripts/chatbot-logic-test.mjs"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4",
