@@ -2,6 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 
 const buckets = new Map<string, { count: number; resetAt: number }>();
 
+/** Always allow major search engines — required for Google sitelinks & indexing. */
+const SEARCH_ENGINE_BOTS = [
+  "googlebot",
+  "google-inspectiontool",
+  "bingbot",
+  "slurp",
+  "duckduckbot",
+  "baiduspider",
+  "yandexbot",
+  "applebot",
+  "facebot",
+  "twitterbot",
+  "linkedinbot",
+];
+
 const SCRAPER_AGENTS = [
   "scrapy",
   "curl/",
@@ -45,6 +60,11 @@ const SCRAPER_AGENTS = [
   "undici",
 ];
 
+export function isSearchEngineBot(req: NextRequest): boolean {
+  const ua = (req.headers.get("user-agent") || "").toLowerCase();
+  return SEARCH_ENGINE_BOTS.some((b) => ua.includes(b));
+}
+
 export function rateLimit(
   req: NextRequest,
   limit = 60,
@@ -76,6 +96,8 @@ export function rateLimit(
 }
 
 export function isBotOrScraper(req: NextRequest): boolean {
+  if (isSearchEngineBot(req)) return false;
+
   const ua = (req.headers.get("user-agent") || "").toLowerCase();
   if (!ua || ua.length < 12) return true;
   if (SCRAPER_AGENTS.some((b) => ua.includes(b))) return true;
@@ -109,7 +131,8 @@ export function applySecurityHeaders(response: NextResponse): NextResponse {
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), display-capture=()");
-  response.headers.set("X-Robots-Tag", "noai, noimageai, noarchive, nosnippet");
+  // Do NOT set nosnippet/noarchive — those block Google rich results & sitelinks.
+  response.headers.set("X-Robots-Tag", "noai, noimageai");
   response.headers.set(
     "Content-Security-Policy",
     "frame-ancestors 'none'; base-uri 'self'; form-action 'self' mailto:"

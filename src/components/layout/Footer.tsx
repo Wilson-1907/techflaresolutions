@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Mail, MapPin } from "lucide-react";
 import { company, navLinks } from "@/data/site";
+import { SITELINK_PAGES } from "@/data/seo";
 import { EmailLink } from "@/components/ui/EmailLink";
 import { ContactChannelWidgets } from "@/components/brand/ContactChannelWidgets";
 
@@ -16,12 +17,15 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 font-semibold text-gold">Quick Links</h3>
+            <h3 className="mb-4 font-semibold text-gold">Explore</h3>
             <ul className="space-y-2">
-              {navLinks.slice(0, 6).map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-gold transition-colors">
-                    {link.label}
+              {SITELINK_PAGES.map((link) => (
+                <li key={link.url}>
+                  <Link
+                    href={link.url}
+                    className="text-sm text-muted-foreground hover:text-gold transition-colors"
+                  >
+                    {link.name}
                   </Link>
                 </li>
               ))}
@@ -34,34 +38,21 @@ export function Footer() {
               Sign in for your private workspace — separate from this public website.
             </p>
             <ul className="space-y-2">
-              <li>
-                <Link href="/portal/client" className="text-sm text-muted-foreground hover:text-gold transition-colors">
-                  Client workspace
-                </Link>
-              </li>
-              <li>
-                <Link href="/portal/innovation" className="text-sm text-muted-foreground hover:text-gold transition-colors">
-                  Innovator workspace
-                </Link>
-              </li>
-              <li>
-                <Link href="/portal/employee" className="text-sm text-muted-foreground hover:text-gold transition-colors">
-                  Employee workspace
-                </Link>
-              </li>
+              {navLinks.slice(6).map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-gold transition-colors">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
               <li>
                 <Link href="/newsroom" className="text-sm text-muted-foreground hover:text-gold transition-colors">
                   Newsroom
                 </Link>
               </li>
               <li>
-                <Link href="/investor-relations" className="text-sm text-muted-foreground hover:text-gold transition-colors">
-                  Investor Relations
-                </Link>
-              </li>
-              <li>
-                <Link href="/community" className="text-sm text-muted-foreground hover:text-gold transition-colors">
-                  Community
+                <Link href="/login" className="text-sm text-muted-foreground hover:text-gold transition-colors">
+                  Login
                 </Link>
               </li>
             </ul>

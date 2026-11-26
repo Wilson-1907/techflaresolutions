@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { rateLimit, isBotOrScraper, applySecurityHeaders } from "@/lib/security";
+import { rateLimit, isBotOrScraper, isSearchEngineBot, applySecurityHeaders } from "@/lib/security";
 import { getAdminPanelUrl } from "@/lib/env";
 import { isTrustedAdminRequest } from "@/lib/admin-api";
 import { isTrustedFinanceRequest } from "@/lib/finance-api";
@@ -19,18 +19,23 @@ export async function middleware(req: NextRequest) {
     return applySecurityHeaders(NextResponse.next());
   }
 
+  const searchBot = isSearchEngineBot(req);
+
   if (!publicAssetPaths.some((p) => pathname.startsWith(p)) && !trustedService) {
     if (isBotOrScraper(req)) {
       return new NextResponse("Forbidden", { status: 403 });
     }
   }
 
-  if (pathname.startsWith("/api") && !trustedService) {
-    const limited = rateLimit(req, 120, 60_000);
-    if (limited) return limited;
-  } else if (!publicAssetPaths.some((p) => pathname.startsWith(p)) && !trustedService) {
-    const limited = rateLimit(req, 180, 60_000);
-    if (limited) return limited;
+  // Never rate-limit Google/Bing — needed for indexing and sitelinks.
+  if (!searchBot) {
+    if (pathname.startsWith("/api") && !trustedService) {
+      const limited = rateLimit(req, 120, 60_000);
+      if (limited) return limited;
+    } else if (!publicAssetPaths.some((p) => pathname.startsWith(p)) && !trustedService) {
+      const limited = rateLimit(req, 180, 60_000);
+      if (limited) return limited;
+    }
   }
 
   if (pathname.startsWith("/portal/admin")) {

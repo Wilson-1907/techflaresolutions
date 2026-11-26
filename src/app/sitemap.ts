@@ -1,10 +1,19 @@
 import type { MetadataRoute } from "next";
 import { products, services, industries } from "@/data/site";
+import { SITELINK_PAGES } from "@/data/seo";
 
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.techflare-solutions.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
+
+  const sitelinkRoutes = SITELINK_PAGES.map((page) => ({
+    url: `${siteUrl}${page.url}`,
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: 0.95,
+  }));
+
   const staticRoutes = [
     "",
     "/about",
@@ -16,6 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/research",
     "/careers",
     "/contact",
+    "/login",
     "/newsroom",
     "/newsroom/we-will-open-soon",
     "/newsroom/we-are-open",
@@ -28,8 +38,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority:
       path === ""
         ? 1
-        : path.includes("newsroom") || path === "/services" || path === "/products"
-          ? 0.9
+        : ["/services", "/products", "/contact", "/login", "/community", "/innovation-hub"].includes(
+              path
+            )
+          ? 0.95
           : 0.8,
   }));
 
@@ -54,5 +66,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticRoutes, ...productRoutes, ...serviceAnchors, ...industryRoutes];
+  // Deduplicate by URL (sitelink pages also appear in staticRoutes)
+  const seen = new Set<string>();
+  return [...sitelinkRoutes, ...staticRoutes, ...productRoutes, ...serviceAnchors, ...industryRoutes].filter(
+    (entry) => {
+      if (seen.has(entry.url)) return false;
+      seen.add(entry.url);
+      return true;
+    }
+  );
 }

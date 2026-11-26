@@ -7,11 +7,21 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
-        disallow: ["/portal/", "/api/", "/login", "/register"],
+        allow: ["/", "/login", "/register", "/services", "/products", "/contact", "/community"],
+        disallow: ["/portal/", "/api/", "/pay"],
       },
       {
         userAgent: "Googlebot",
+        allow: "/",
+        disallow: ["/portal/", "/api/"],
+      },
+      {
+        userAgent: "Google-InspectionTool",
+        allow: "/",
+        disallow: ["/portal/", "/api/"],
+      },
+      {
+        userAgent: "Bingbot",
         allow: "/",
         disallow: ["/portal/", "/api/"],
       },
