@@ -3,6 +3,7 @@
 import { useCallback } from "react";
 import { IntroSplash, INTRO_KEY } from "@/components/home/IntroSplash";
 import { HeroSection } from "@/components/home/HeroSection";
+import { StatsStrip } from "@/components/home/StatsStrip";
 import { InnovationShowcase } from "@/components/home/InnovationShowcase";
 import { ServicesPreview } from "@/components/home/ServicesPreview";
 import { ProductsPreview } from "@/components/home/ProductsPreview";
@@ -40,10 +41,13 @@ export default function HomePage() {
         <HeroSection ready={landingReady} />
         <AnimatedMarquee />
         <RevealUp>
-          <InnovationShowcase />
+          <StatsStrip />
         </RevealUp>
-        <RevealUp delay={0.1}>
+        <RevealUp delay={0.06}>
           <ServicesPreview />
+        </RevealUp>
+        <RevealUp delay={0.08}>
+          <InnovationShowcase />
         </RevealUp>
         <RevealUp delay={0.12}>
           <ProductsPreview />

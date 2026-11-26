@@ -3,8 +3,20 @@ import { Metadata } from "next";
 import { ContactClient } from "./ContactClient";
 
 export const metadata: Metadata = {
-  title: "Contact",
-  description: "Get in touch with TechFlare Solutions. Email, call, SMS, WhatsApp, and social links.",
+  title: "Contact — Technology & Software Inquiries",
+  description:
+    "Contact TechFlare Solutions for technology, research, software, AI, automation, POS, and idea-to-product projects in Kenya.",
+  keywords: [
+    "contact TechFlare Solutions",
+    "technology",
+    "software",
+    "AI",
+    "automation",
+    "research",
+    "Kenya",
+  ],
+  alternates: { canonical: "/contact" },
+  robots: { index: true, follow: true },
 };
 
 export default function ContactPage() {

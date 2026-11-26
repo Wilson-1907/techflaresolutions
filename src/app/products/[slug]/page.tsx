@@ -46,9 +46,12 @@ export default async function ProductPage({ params }: Props) {
   const product = await loadProductBySlug(slug);
   if (!product) notFound();
 
+  const isPilot = product.status === "pilot";
   const isLive = product.status === "live";
+  const isTesting = product.status === "testing";
   const isComingSoon = product.status === "coming-soon";
   const isInDev = product.status === "in-development";
+  const canLaunch = (isPilot || isLive) && Boolean(product.externalUrl);
 
   const defaultTerms = [
     "Built and maintained by TechFlare Solutions",
@@ -95,22 +98,37 @@ export default async function ProductPage({ params }: Props) {
             )}
           </div>
 
-          {isLive && product.externalUrl && (
-            <GlassCard className="mb-8 border-life-green/30 bg-life-green/5">
+          {canLaunch && product.externalUrl && (
+            <GlassCard className="mb-8 border-cyan-400/30 bg-cyan-400/5">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <p className="font-semibold text-life-green">Ready — Live Now</p>
-                  <p className="text-sm text-muted-foreground mt-1">This product is available to use today.</p>
+                  <p className="font-semibold text-cyan-300">
+                    {isPilot ? "Pilot phase" : "Ready — live now"}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {isPilot
+                      ? "This product is in pilot with selected partners and learners."
+                      : "This product is available to use today."}
+                  </p>
                 </div>
                 <a
                   href={product.externalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-xl bg-life-green/20 px-5 py-2.5 text-sm font-semibold text-life-green hover:bg-life-green/30"
+                  className="inline-flex items-center gap-2 rounded-xl bg-cyan-400/15 px-5 py-2.5 text-sm font-semibold text-cyan-300 hover:bg-cyan-400/25"
                 >
-                  Launch product <ExternalLink className="h-4 w-4" />
+                  {isPilot ? "Open pilot" : "Launch product"} <ExternalLink className="h-4 w-4" />
                 </a>
               </div>
+            </GlassCard>
+          )}
+
+          {isTesting && (
+            <GlassCard className="mb-8 border-gold/30">
+              <p className="text-sm text-muted-foreground">
+                <strong className="text-gold">Testing</strong> — TechFlare Solutions is evaluating this
+                product with partners before wider release.
+              </p>
             </GlassCard>
           )}
 
@@ -167,21 +185,23 @@ export default async function ProductPage({ params }: Props) {
             </div>
 
             <div className="space-y-6">
-              {isLive && product.externalUrl ? (
-                <GlassCard className="border-life-green/30">
-                  <h2 className="text-xl font-bold mb-4">Get Started</h2>
+              {canLaunch && product.externalUrl ? (
+                <GlassCard className="border-cyan-400/30">
+                  <h2 className="text-xl font-bold mb-4">{isPilot ? "Join the pilot" : "Get started"}</h2>
                   <a
                     href={product.externalUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-gold/20 py-3 text-sm font-semibold text-gold hover:bg-gold/30"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-400/15 py-3 text-sm font-semibold text-cyan-300 hover:bg-cyan-400/25"
                   >
-                    Launch product <ExternalLink className="h-4 w-4" />
+                    {isPilot ? "Open pilot" : "Launch product"} <ExternalLink className="h-4 w-4" />
                   </a>
                 </GlassCard>
-              ) : isInDev || isComingSoon ? (
+              ) : isTesting || isInDev || isComingSoon ? (
                 <GlassCard className="border-gold/30">
-                  <h2 className="text-xl font-bold mb-4">{isInDev ? "Early Access" : "Join Waitlist"}</h2>
+                  <h2 className="text-xl font-bold mb-4">
+                    {isTesting ? "Request early access" : isInDev ? "Early access" : "Join waitlist"}
+                  </h2>
                   <Button href={buildEmailComposeLink({ type: "product", product: product.title })} className="w-full">
                     <Mail className="h-4 w-4" /> Email us — {product.title}
                   </Button>

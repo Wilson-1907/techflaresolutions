@@ -5,8 +5,21 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { company, coreValues, founder } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: "About",
-  description: "Learn about TechFlare Solutions — our mission, vision, values, and founder.",
+  title: "About — Technology, Research, Software & AI",
+  description:
+    "About TechFlare Solutions — mission, vision, and values behind our technology, research, software, AI, ideas, and automation work in Kenya.",
+  keywords: [
+    "TechFlare Solutions",
+    "technology",
+    "research",
+    "software",
+    "AI",
+    "automation",
+    "about",
+    "Kenya",
+  ],
+  alternates: { canonical: "/about" },
+  robots: { index: true, follow: true },
 };
 
 export default function AboutPage() {

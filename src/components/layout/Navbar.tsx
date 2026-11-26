@@ -19,22 +19,22 @@ export function Navbar() {
   const close = () => setOpen(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-gold/20 bg-black/90 backdrop-blur-xl">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/8 bg-[#050b14]/80 backdrop-blur-2xl">
       <nav
-        className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2 lg:px-8"
+        className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2.5 lg:px-8"
         aria-label="Company website"
       >
         <Logo size="xs" priority href="/" showName={false} />
 
         <div className="ml-auto flex items-center gap-1 sm:gap-2">
-          <div className="hidden items-center gap-1 lg:flex">
+          <div className="hidden items-center gap-0.5 xl:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gold/10",
-                  link.highlight && "text-gold"
+                  "rounded-lg px-2.5 py-2 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground",
+                  link.highlight && "text-gold hover:text-gold"
                 )}
               >
                 {link.label}
@@ -59,7 +59,7 @@ export function Navbar() {
           <SiteNavbarActions />
 
           <button
-            className="rounded-lg p-2 hover:bg-gold/10 lg:hidden"
+            className="rounded-lg p-2 hover:bg-white/5 xl:hidden"
             onClick={() => setOpen(!open)}
             aria-expanded={open}
             aria-label="Toggle menu"
@@ -70,7 +70,7 @@ export function Navbar() {
       </nav>
 
       {open && (
-        <div className="border-t border-gold/20 bg-black/95 backdrop-blur-xl lg:hidden">
+        <div className="border-t border-white/8 bg-[#050b14]/95 backdrop-blur-xl xl:hidden">
           <div className="flex flex-col gap-1 px-4 py-4">
             {navLinks.map((link) => (
               <Link

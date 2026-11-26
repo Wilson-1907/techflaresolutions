@@ -9,34 +9,51 @@ import { buildEmailComposeLink } from "@/lib/mailto";
 
 export function CTASection() {
   return (
-    <section className="py-24">
+    <section className="py-28">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="relative overflow-hidden rounded-3xl border border-gold/30 bg-gradient-to-br from-gold/20 via-blue-500/10 to-life-green/20 p-12 text-center"
+          className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-deep-blue-mid via-[#0b1524] to-[#061018] p-10 sm:p-14 text-center"
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(212,175,55,0.1),transparent)]" />
+          <div className="absolute inset-0 mesh-bg opacity-50 pointer-events-none" />
+          <div className="absolute inset-0 grid-overlay opacity-30 pointer-events-none" />
           <div className="relative">
-            <h2 className="text-3xl font-bold sm:text-4xl">Let&apos;s Build Something Extraordinary</h2>
-            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-              Whether you have an idea, a problem, or a vision — TechFlare Solutions is ready to partner with you.
+            <p className="text-cyan-300/90 text-sm font-semibold uppercase tracking-[0.22em] mb-4">
+              Partner with TechFlare Solutions
             </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Button href="/login?redirect=/portal/innovation/submit" size="lg">Submit an idea</Button>
-              <Button href="/solutions" variant="secondary" size="lg">Solve my problem</Button>
+            <h2 className="font-display text-3xl font-semibold sm:text-5xl tracking-tight">
+              Research. Software. AI. Automation.
+            </h2>
+            <p className="mt-5 text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Bring an idea, a problem, or a product vision — we design and ship modern technology with
+              clarity and care.
+            </p>
+            <div className="mt-10 flex flex-wrap justify-center gap-3">
+              <Button href="/services" size="lg">
+                Explore services
+              </Button>
+              <Button href="/login?redirect=/portal/innovation/submit" variant="secondary" size="lg">
+                Submit an idea
+              </Button>
               <Button href={buildEmailComposeLink({ type: "solutions" })} variant="outline" size="lg">
                 Email us
               </Button>
             </div>
-            <div className="mt-10 flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
+            <div className="mt-12 flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
               <EmailLink context={{ type: "contact" }} className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-gold" />
                 {company.email}
               </EmailLink>
-              <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-gold" />{company.phone}</span>
-              <span className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gold" />{company.offices[0].city}, {company.offices[0].country}</span>
+              <span className="flex items-center gap-2">
+                <Phone className="h-4 w-4 text-gold" />
+                {company.phone}
+              </span>
+              <span className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-gold" />
+                {company.offices[0].city}, {company.offices[0].country}
+              </span>
             </div>
           </div>
         </motion.div>

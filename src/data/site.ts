@@ -82,10 +82,11 @@ export const accountVsCommunity = {
   communityDescription:
     "Our community is separate from your website account. Join our WhatsApp group to receive notifications, share your email for activity updates, and access careers and innovation programs.",
   communitySteps: [
-    "Create your TechFlare account (recommended for portal and points)",
+    "Create your TechFlare account (required for confirmation and careers)",
     "Join our WhatsApp community via the official link",
     "Share your email in the group for notifications and event reminders",
-    "Apply for careers and participate in community innovation activities",
+    "Confirm membership at /community — required before any career application",
+    "When hiring is open, apply on /careers (community members only)",
   ],
 };
 
@@ -268,7 +269,8 @@ export const services: Service[] = [
 
 export { industries } from "./industries";
 
-export type ProductStatus = "live" | "in-development" | "coming-soon";
+/** Product lifecycle — CBE is in pilot; other products are in testing. */
+export type ProductStatus = "pilot" | "testing" | "live" | "in-development" | "coming-soon";
 
 export interface Product {
   slug: string;
@@ -286,6 +288,8 @@ export interface Product {
 }
 
 export const productStatusLabels: Record<ProductStatus, string> = {
+  pilot: "Pilot",
+  testing: "Testing",
   live: "Ready",
   "in-development": "In the Fire",
   "coming-soon": "Coming",
@@ -297,8 +301,8 @@ export const products: Product[] = [
     title: "Career Compass",
     tagline: "AI-Powered CBE Career Guide for Kenyan Students",
     description:
-      "Career Compass helps students navigate Kenya's Competency-Based Education system with confidence. Built by TechFlare Solutions, it uses AI to analyze interests, skills, and aspirations — delivering personalized career pathway recommendations, expert counseling connections, and interactive scenario learning.",
-    status: "live",
+      "Career Compass helps students navigate Kenya's Competency-Based Education system with confidence. Built by TechFlare Solutions, it uses AI to analyze interests, skills, and aspirations — delivering personalized career pathway recommendations, expert counseling connections, and interactive scenario learning. Currently in pilot with partner schools and learners.",
+    status: "pilot",
     externalUrl: "https://aipoweredcbeguide.vercel.app/",
     image: "/products/career-compass.svg",
     features: [
@@ -307,7 +311,7 @@ export const products: Product[] = [
       "AI counselor chat",
       "STEM, Social Sciences & Arts pathways",
       "Expert-verified guidance",
-      "Free to start — no credit card required",
+      "Pilot program — early access partners",
     ],
     howItWorks: [
       "Create a free account in under a minute",
@@ -318,12 +322,36 @@ export const products: Product[] = [
     ],
   },
   {
+    slug: "techflare-pos",
+    title: "TechFlare POS",
+    tagline: "Modern point-of-sale for retail, cafés, and service businesses",
+    description:
+      "TechFlare POS is a modern point-of-sale and sales operations system — inventory, receipts, staff roles, sales analytics, and M-Pesa-ready payment flows. Built for Kenyan SMEs that need a clean, reliable counter and back-office experience. Currently in testing with selected merchants.",
+    status: "testing",
+    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&q=80&auto=format&fit=crop",
+    features: [
+      "Fast checkout & digital receipts",
+      "Inventory and stock alerts",
+      "Staff roles & shift tracking",
+      "Sales analytics dashboard",
+      "M-Pesa and cash-ready flows",
+      "Multi-outlet ready architecture",
+    ],
+    howItWorks: [
+      "Onboard your business and catalog products or services",
+      "Staff check out sales from a tablet or desktop POS screen",
+      "Stock updates automatically as sales complete",
+      "Owners review daily sales, margins, and top items",
+      "Connect payments and expand to additional outlets",
+    ],
+  },
+  {
     slug: "biometric-voting-system",
     title: "Biometric Voting System",
     tagline: "Secure, transparent elections built for Kenya",
     description:
-      "TechFlare Solutions is actively developing a next-generation biometric voting platform designed for institutional and national-scale elections. Voters authenticate via secure biometric identity, cast encrypted votes, and results are tallied with full audit trails — built with IEBC-grade security standards in mind.",
-    status: "in-development",
+      "TechFlare Solutions is testing a next-generation biometric voting platform designed for institutional and national-scale elections. Voters authenticate via secure biometric identity, cast encrypted votes, and results are tallied with full audit trails — built with IEBC-grade security standards in mind.",
+    status: "testing",
     image: "/products/biometric-voting-system.png",
     features: [
       "Biometric voter authentication",
@@ -346,8 +374,8 @@ export const products: Product[] = [
     title: "Biometric Class Attendance",
     tagline: "Contactless attendance for schools and institutions",
     description:
-      "A biometric class attendance system is coming from TechFlare Solutions — designed for schools, colleges, and training institutions across Kenya. Fast check-in via fingerprint or facial recognition, real-time reporting for administrators, and seamless integration with existing school management systems.",
-    status: "coming-soon",
+      "A biometric class attendance system from TechFlare Solutions — designed for schools, colleges, and training institutions across Kenya. Fast check-in via fingerprint or facial recognition, real-time reporting for administrators, and seamless integration with existing school management systems. Currently in testing.",
+    status: "testing",
     features: [
       "Fingerprint & facial recognition",
       "Real-time attendance dashboards",

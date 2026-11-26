@@ -17,13 +17,21 @@ export type ApiProduct = {
   innovatorName?: string | null;
 };
 
+function normalizeStatus(status: string): ProductStatus {
+  const allowed: ProductStatus[] = ["pilot", "testing", "live", "in-development", "coming-soon"];
+  if (allowed.includes(status as ProductStatus)) return status as ProductStatus;
+  if (status === "ready") return "live";
+  if (status === "beta") return "pilot";
+  return "testing";
+}
+
 function mapProduct(item: ApiProduct): Product {
   return {
     slug: item.slug,
     title: item.title,
     tagline: item.tagline,
     description: item.description,
-    status: item.status as ProductStatus,
+    status: normalizeStatus(item.status),
     image: item.image,
     externalUrl: item.externalUrl,
     features: item.features || [],

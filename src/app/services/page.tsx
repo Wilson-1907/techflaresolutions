@@ -4,8 +4,30 @@ import { ServicesGrid } from "@/components/services/ServicesGrid";
 import { ServiceCatalogPricing } from "@/components/services/ServiceCatalogPricing";
 
 export const metadata: Metadata = {
-  title: "Services",
-  description: "Innovation consulting, software development, AI solutions, cloud, cybersecurity, and more.",
+  title: "Services — Technology, Research, Software, AI & Automation",
+  description:
+    "Full TechFlare Solutions service line: innovation consulting, software development, AI, automation, data, cloud, IoT, cybersecurity, research, and product development in Kenya.",
+  keywords: [
+    "technology",
+    "research",
+    "software",
+    "AI",
+    "idea",
+    "automation",
+    "software development Kenya",
+    "cybersecurity",
+    "IoT",
+    "cloud",
+    "simple frontend",
+    "POS",
+  ],
+  alternates: { canonical: "/services" },
+  robots: { index: true, follow: true },
+  openGraph: {
+    title: "Services | TechFlare Solutions",
+    description: "Technology, research, software, AI, ideas, and automation services.",
+    url: "/services",
+  },
 };
 
 export default function ServicesPage() {
@@ -13,8 +35,8 @@ export default function ServicesPage() {
     <>
       <PageHeader
         title="Our Services"
-        subtitle="Tap any service card to see how we solve it — our process, tools, and delivery approach"
-        badge="What We Offer"
+        subtitle="Nine complete service lines — from research and consulting to software, AI, automation, and secure deployment"
+        badge="What we offer"
       />
 
       <section className="pb-24">

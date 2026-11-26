@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Outfit, Sora } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { StatsProvider } from "@/components/providers/StatsProvider";
@@ -9,29 +9,65 @@ import { ConditionalNavbar } from "@/components/layout/ConditionalNavbar";
 import { ConditionalFooter } from "@/components/layout/ConditionalFooter";
 import { ConditionalAIAssistant } from "@/components/layout/ConditionalAIAssistant";
 import { CopyProtection } from "@/components/security/CopyProtection";
-const inter = Inter({
+import { JsonLd } from "@/components/seo/JsonLd";
+import { SEO_DEFAULT_DESCRIPTION, SEO_KEYWORDS } from "@/data/seo";
+
+const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-display",
+  display: "swap",
 });
 
+const sora = Sora({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.techflare-solutions.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
-    default: "TechFlare Solutions | IGNITING INNOVATIONS, DELIVERING SOLUTIONS",
+    default: "TechFlare Solutions | Technology, Research, Software & AI",
     template: "%s | TechFlare Solutions",
   },
-  description:
-    "IGNITING INNOVATIONS, DELIVERING SOLUTIONS — TechFlare researches, validates, builds, and launches technology solutions for businesses and innovators in Kenya and beyond.",
-  keywords: ["innovation", "technology", "software development", "AI solutions", "research"],
+  description: SEO_DEFAULT_DESCRIPTION,
+  keywords: [...SEO_KEYWORDS],
+  authors: [{ name: "TechFlare Solutions" }],
+  creator: "TechFlare Solutions",
+  publisher: "TechFlare Solutions",
+  alternates: { canonical: "/" },
   icons: {
     icon: "/logo.png",
     shortcut: "/logo.png",
     apple: "/logo.png",
   },
   openGraph: {
-    title: "TechFlare Solutions",
-    description: "IGNITING INNOVATIONS, DELIVERING SOLUTIONS",
+    title: "TechFlare Solutions | Technology, Research, Software & AI",
+    description:
+      "Research-driven software, AI, automation, and idea-to-solution delivery. Modern technology for businesses and innovators.",
     type: "website",
+    url: siteUrl,
+    siteName: "TechFlare Solutions",
     images: ["/logo.png"],
+    locale: "en_KE",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TechFlare Solutions",
+    description: "Technology, research, software, AI, ideas, and automation.",
+    images: ["/logo.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -39,6 +75,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  themeColor: "#050b14",
 };
 
 export default function RootLayout({
@@ -47,11 +84,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} h-full dark`}>
-      <body className="min-h-full flex flex-col antialiased bg-black text-foreground overflow-x-hidden">
+    <html lang="en" suppressHydrationWarning className={`${outfit.variable} ${sora.variable} h-full dark`}>
+      <body className="min-h-full flex flex-col antialiased bg-background text-foreground overflow-x-hidden font-sans">
         <ThemeProvider>
           <AccessibilityProvider>
             <StatsProvider>
+              <JsonLd />
               <CopyProtection />
               <AccessibilitySuite />
               <ConditionalNavbar />

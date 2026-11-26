@@ -1,15 +1,25 @@
 import { Metadata } from "next";
-import { Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { GlassCard } from "@/components/ui/GlassCard";
-import { Button } from "@/components/ui/Button";
 import { ProductCardImage, ProductCardActions, ProductStatusBadge } from "@/components/products/ProductCard";
-import { buildEmailComposeLink } from "@/lib/mailto";
 import { loadProducts } from "@/lib/catalog";
 
 export const metadata: Metadata = {
-  title: "Products",
-  description: "Explore TechFlare Solutions products — ready platforms, innovations in the fire, and coming releases.",
+  title: "Products — POS, CBE Pilot, Biometrics",
+  description:
+    "TechFlare Solutions products: Career Compass CBE in pilot, TechFlare POS and biometric systems in testing. Technology, software, AI, and automation.",
+  keywords: [
+    "POS",
+    "point of sale",
+    "CBE",
+    "Career Compass",
+    "biometric voting",
+    "software products Kenya",
+    "AI",
+    "automation",
+  ],
+  alternates: { canonical: "/products" },
+  robots: { index: true, follow: true },
 };
 
 export const dynamic = "force-dynamic";
@@ -23,32 +33,35 @@ export default async function ProductsPage() {
     <>
       <PageHeader
         title="Our Products"
-        subtitle="TechFlare-built solutions and innovator-shared products — ready, in the fire, and coming soon"
+        subtitle="CBE Career Compass is in pilot. POS, biometric voting, and attendance are in testing."
         badge="Products"
       />
 
       <section className="pb-24">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <GlassCard className="mb-10 border-gold/20 text-center py-6">
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Every product here is engineered or curated by <strong className="text-gold">TechFlare Solutions</strong>.
-              Status labels: <strong className="text-life-green">Ready</strong>, <strong className="text-gold">In the Fire</strong>, and <strong>Coming</strong>.
+          <GlassCard className="mb-10 border-cyan-400/20 text-center py-6">
+            <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Status labels: <strong className="text-cyan-300">Pilot</strong> for active field trials,{" "}
+              <strong className="text-gold">Testing</strong> for products under evaluation with partners.
+              Every product is engineered by <strong className="text-foreground">TechFlare Solutions</strong>.
             </p>
           </GlassCard>
 
           <div className="grid gap-8 md:grid-cols-2">
             {techflareProducts.map((product, i) => (
-              <GlassCard key={product.slug} delay={i * 0.1} className="flex flex-col">
+              <GlassCard key={product.slug} delay={i * 0.08} className="flex flex-col">
                 <div className="mb-4">
                   <ProductStatusBadge status={product.status} />
                 </div>
                 <ProductCardImage product={product} />
-                <h2 className="text-2xl font-bold">{product.title}</h2>
+                <h2 className="font-display text-2xl font-semibold">{product.title}</h2>
                 <p className="text-gold mt-1">{product.tagline}</p>
-                <p className="mt-3 text-muted-foreground flex-1">{product.description}</p>
+                <p className="mt-3 text-muted-foreground flex-1 leading-relaxed">{product.description}</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {product.features.map((f) => (
-                    <span key={f} className="rounded-full bg-white/10 px-3 py-1 text-xs">{f}</span>
+                    <span key={f} className="rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs">
+                      {f}
+                    </span>
                   ))}
                 </div>
                 <ProductCardActions product={product} />
@@ -58,10 +71,10 @@ export default async function ProductsPage() {
 
           {innovatorProducts.length > 0 && (
             <div className="mt-16">
-              <h2 className="text-2xl font-bold mb-6">Innovator Shared Products</h2>
+              <h2 className="font-display text-2xl font-semibold mb-6">Innovator shared products</h2>
               <div className="grid gap-8 md:grid-cols-2">
                 {innovatorProducts.map((product, i) => (
-                  <GlassCard key={product.slug} delay={i * 0.1} className="flex flex-col border-life-green/20">
+                  <GlassCard key={product.slug} delay={i * 0.08} className="flex flex-col border-life-green/20">
                     <div className="mb-4 flex flex-wrap gap-2">
                       <ProductStatusBadge status={product.status} />
                       <span className="inline-flex items-center rounded-full border border-life-green/30 bg-life-green/10 px-3 py-1 text-xs font-semibold uppercase text-life-green">
@@ -69,7 +82,7 @@ export default async function ProductsPage() {
                       </span>
                     </div>
                     <ProductCardImage product={product} />
-                    <h2 className="text-2xl font-bold">{product.title}</h2>
+                    <h2 className="font-display text-2xl font-semibold">{product.title}</h2>
                     <p className="text-gold mt-1">{product.tagline}</p>
                     <p className="mt-3 text-muted-foreground flex-1">{product.description}</p>
                     <ProductCardActions product={product} />
@@ -78,17 +91,6 @@ export default async function ProductsPage() {
               </div>
             </div>
           )}
-
-          <GlassCard className="mt-10 flex flex-col items-center justify-center text-center border-dashed border-gold/25 min-h-[240px]">
-            <Sparkles className="h-12 w-12 text-gold/50 mb-4" />
-            <h2 className="text-xl font-bold">More Products on the Way</h2>
-            <p className="mt-2 text-sm text-muted-foreground max-w-sm">
-              Our pipeline is active — enterprise tools, AI platforms, and innovator partnerships. Want early access?
-            </p>
-            <Button href={buildEmailComposeLink({ type: "general", label: "Product inquiry" })} className="mt-6">
-              Email us
-            </Button>
-          </GlassCard>
         </div>
       </section>
     </>

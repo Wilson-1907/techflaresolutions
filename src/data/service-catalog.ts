@@ -10,18 +10,40 @@ export type CatalogService = {
   tags: string[];
 };
 
-/** TechFlare billable services — base prices before demand multiplier. */
+/** TechFlare billable services & items — base prices in KES before demand multiplier. */
 export const SERVICE_CATALOG: CatalogService[] = [
   {
-    id: "web-simple",
-    name: "Simple website (landing / celebration)",
+    id: "frontend-simple",
+    name: "Simple frontend",
     category: "Web Development",
-    description: "Single-page or small multi-section site with photos, messages, basic animations.",
-    limits: "Up to 5 pages, 10 images, no user accounts, 1 revision round.",
+    description: "Clean single-page or light multi-section frontend — brand intro, CTA, contact.",
+    limits: "Up to 4 sections, basic animations, 1 revision round.",
+    basePriceKes: 3000,
+    unit: "project",
+    typicalTimeline: "1–2 days",
+    tags: ["frontend", "simple", "landing", "website", "3k"],
+  },
+  {
+    id: "frontend-occasion",
+    name: "Occasion frontend",
+    category: "Web Development",
+    description: "Celebration / occasion site — birthday, wedding, event invite with gallery and message.",
+    limits: "Up to 6 sections, photo gallery, music optional, 1 revision round.",
     basePriceKes: 5000,
     unit: "project",
     typicalTimeline: "2–3 days",
-    tags: ["website", "landing", "birthday", "portfolio", "simple"],
+    tags: ["frontend", "occasion", "birthday", "wedding", "event", "5k"],
+  },
+  {
+    id: "web-simple",
+    name: "Simple website (landing / brochure)",
+    category: "Web Development",
+    description: "Small multi-section marketing site with photos, messaging, and basic motion.",
+    limits: "Up to 5 pages, 10 images, no user accounts, 1 revision round.",
+    basePriceKes: 8000,
+    unit: "project",
+    typicalTimeline: "3–5 days",
+    tags: ["website", "landing", "portfolio", "simple"],
   },
   {
     id: "web-custom",
@@ -44,6 +66,17 @@ export const SERVICE_CATALOG: CatalogService[] = [
     unit: "project",
     typicalTimeline: "3–4 weeks",
     tags: ["shop", "ecommerce", "store"],
+  },
+  {
+    id: "pos-setup",
+    name: "TechFlare POS setup",
+    category: "Products",
+    description: "Point-of-sale onboarding — catalog, checkout, receipts, staff roles.",
+    limits: "1 outlet at launch, training session, 14-day support.",
+    basePriceKes: 45000,
+    unit: "setup",
+    typicalTimeline: "1–2 weeks",
+    tags: ["pos", "point of sale", "retail", "mpesa"],
   },
   {
     id: "deploy-hosting",
@@ -87,7 +120,18 @@ export const SERVICE_CATALOG: CatalogService[] = [
     basePriceKes: 25000,
     unit: "bot",
     typicalTimeline: "1 week",
-    tags: ["ai", "chatbot", "assistant", "groq"],
+    tags: ["ai", "chatbot", "assistant", "automation"],
+  },
+  {
+    id: "automation-workflow",
+    name: "Business process automation",
+    category: "AI Solutions",
+    description: "Automate repetitive ops — forms, alerts, approvals, and notifications.",
+    limits: "Up to 3 workflows, 1 integration channel, documentation.",
+    basePriceKes: 40000,
+    unit: "project",
+    typicalTimeline: "1–2 weeks",
+    tags: ["automation", "workflow", "ops", "idea"],
   },
   {
     id: "mobile-app-mvp",
@@ -98,18 +142,29 @@ export const SERVICE_CATALOG: CatalogService[] = [
     basePriceKes: 120000,
     unit: "project",
     typicalTimeline: "4–6 weeks",
-    tags: ["mobile", "app", "android", "ios"],
+    tags: ["mobile", "app", "android", "ios", "software"],
   },
   {
     id: "api-backend",
     name: "API / backend development",
     category: "Software Engineering",
     description: "REST API, database, auth, admin endpoints.",
-    limits: "Up to 15 endpoints, PostgreSQL, documentation.",
+    limits: "Up to 15 endpoints, PostgreSQL/MySQL, documentation.",
     basePriceKes: 45000,
     unit: "project",
     typicalTimeline: "2–3 weeks",
-    tags: ["api", "backend", "database", "node"],
+    tags: ["api", "backend", "database", "software"],
+  },
+  {
+    id: "research-sprint",
+    name: "Research & feasibility sprint",
+    category: "Research",
+    description: "Problem research, market scan, and technical feasibility memo.",
+    limits: "1 problem space, written report, 1 review call.",
+    basePriceKes: 20000,
+    unit: "sprint",
+    typicalTimeline: "5–7 days",
+    tags: ["research", "feasibility", "idea", "r&d"],
   },
   {
     id: "cyber-audit-basic",
@@ -131,7 +186,7 @@ export const SERVICE_CATALOG: CatalogService[] = [
     basePriceKes: 55000,
     unit: "migration",
     typicalTimeline: "1–2 weeks",
-    tags: ["cloud", "aws", "migration", "devops"],
+    tags: ["cloud", "aws", "migration", "devops", "technology"],
   },
   {
     id: "iot-prototype",
@@ -142,7 +197,7 @@ export const SERVICE_CATALOG: CatalogService[] = [
     basePriceKes: 75000,
     unit: "prototype",
     typicalTimeline: "2–3 weeks",
-    tags: ["iot", "sensor", "hardware"],
+    tags: ["iot", "sensor", "hardware", "automation"],
   },
   {
     id: "content-media",
@@ -153,7 +208,7 @@ export const SERVICE_CATALOG: CatalogService[] = [
     basePriceKes: 3000,
     unit: "package",
     typicalTimeline: "1–2 days",
-    tags: ["photos", "slider", "song", "audio", "gallery", "birthday"],
+    tags: ["photos", "slider", "song", "audio", "gallery"],
   },
   {
     id: "maintenance-monthly",
@@ -175,10 +230,21 @@ export const SERVICE_CATALOG: CatalogService[] = [
     basePriceKes: 5000,
     unit: "hour",
     typicalTimeline: "scheduled",
-    tags: ["consulting", "advice", "review"],
+    tags: ["consulting", "advice", "review", "technology"],
   },
 ];
 
 export function getCatalogService(id: string) {
   return SERVICE_CATALOG.find((s) => s.id === id);
+}
+
+export function searchCatalog(query: string) {
+  const q = query.trim().toLowerCase();
+  if (!q) return SERVICE_CATALOG;
+  return SERVICE_CATALOG.filter((s) => {
+    const hay = [s.name, s.category, s.description, s.limits, ...s.tags, String(s.basePriceKes)]
+      .join(" ")
+      .toLowerCase();
+    return hay.includes(q);
+  });
 }

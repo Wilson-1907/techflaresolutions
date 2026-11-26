@@ -1,0 +1,30 @@
+export const SEO_KEYWORDS = [
+  "technology",
+  "research",
+  "software",
+  "AI",
+  "artificial intelligence",
+  "idea",
+  "ideas",
+  "automation",
+  "TechFlare Solutions",
+  "software development Kenya",
+  "innovation hub",
+  "digital transformation",
+  "machine learning",
+  "cloud computing",
+  "cybersecurity",
+  "IoT",
+  "point of sale",
+  "POS Kenya",
+  "CBE career guide",
+  "web development",
+  "product engineering",
+  "R&D",
+  "enterprise software",
+  "Karatina",
+  "Nyeri",
+] as const;
+
+export const SEO_DEFAULT_DESCRIPTION =
+  "TechFlare Solutions — technology, research, software, AI, automation, and idea-to-product delivery for businesses and innovators in Kenya and beyond.";

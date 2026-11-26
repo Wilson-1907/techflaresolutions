@@ -79,7 +79,9 @@ export function CommunityClient() {
             <Users className="h-8 w-8 text-life-green mb-3" />
             <h2 className="text-xl font-bold mb-4">Confirm Community Membership</h2>
             <p className="text-sm text-muted-foreground mb-4">
-              After joining WhatsApp, share your email in the group for notifications. Then confirm here (requires signed-in account).
+              After joining WhatsApp, share your email in the group for notifications. Then confirm here
+              (requires signed-in account). Career applications on /careers stay locked until this
+              confirmation is complete.
             </p>
             {confirmed || user?.communityMember ? (
               <p className="text-life-green font-semibold">You are a verified community member.</p>

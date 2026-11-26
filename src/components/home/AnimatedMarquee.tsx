@@ -1,32 +1,32 @@
 "use client";
 
 const items = [
-  "AI & Machine Learning",
+  "Technology",
+  "Research",
+  "Software",
+  "Artificial Intelligence",
+  "Ideas",
+  "Automation",
+  "Point of Sale",
   "Cloud Architecture",
-  "Mobile Engineering",
   "Cybersecurity",
-  "FinTech Solutions",
-  "IoT & Edge Computing",
-  "Data Analytics",
-  "DevOps & CI/CD",
-  "UI/UX Design",
-  "Blockchain",
-  "Enterprise SaaS",
-  "Innovation Labs",
+  "IoT & Edge",
+  "Data Engineering",
+  "Product Development",
 ];
 
 export function AnimatedMarquee() {
   const doubled = [...items, ...items];
 
   return (
-    <section className="relative overflow-hidden border-y border-gold/20 bg-deep-blue/40 py-6">
+    <section className="relative overflow-hidden border-y border-white/8 bg-[#08101c]/80 py-5">
       <div className="animate-marquee flex whitespace-nowrap">
         {doubled.map((item, i) => (
           <span
             key={`${item}-${i}`}
-            className="mx-8 inline-flex items-center gap-2 text-sm font-medium uppercase tracking-widest text-gold/80"
+            className="mx-8 inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground"
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-life-green animate-pulse" />
+            <span className="h-1.5 w-1.5 rounded-full bg-cyan-400/80" />
             {item}
           </span>
         ))}
