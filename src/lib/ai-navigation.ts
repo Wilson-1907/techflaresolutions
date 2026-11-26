@@ -401,7 +401,7 @@ export function matchNavigationConfirmation(
   };
 }
 
-/** Greetings, thanks, help menu — answered locally so "hello" never becomes "great question about hello". */
+/** Greetings / small talk — answered locally so chatty lines never hit the backend fallback. */
 export function matchConversationalIntent(message: string): ChatResolution | null {
   const t = message.trim();
   if (!t) return null;
@@ -415,8 +415,20 @@ export function matchConversationalIntent(message: string): ChatResolution | nul
   ) {
     return {
       reply:
-        `Hello! Welcome to ${company.name}. I can help you submit an idea, request a solution, find products, pay an invoice, or join our community. ` +
-        `Try asking “How do I submit my idea?” or “What services do you offer?” — or say “take me to contact” to reach our team.`,
+        `Hello! I can help you submit an idea, request a solution, find products, pay an invoice, or join our community. ` +
+        `Try “How do I submit my idea?” or “What services do you offer?”`,
+    };
+  }
+
+  if (
+    /^(how\s+are\s+you|how('?s|\s+is)\s+it\s+going|how\s+do\s+you\s+do|what'?s\s+up|wassup|sup)([\s?!.]|$)/i.test(
+      t
+    ) ||
+    /^how\s+are\s+you\s+(doing|today)?[\s?!.]*$/i.test(t)
+  ) {
+    return {
+      reply:
+        `Doing well — thanks for asking! Ready to help with TechFlare services, products, Innovation Hub, billing, or careers. What do you need?`,
     };
   }
 
@@ -425,13 +437,13 @@ export function matchConversationalIntent(message: string): ChatResolution | nul
     /^(thanks|thank\s*you).{0,40}$/i.test(t)
   ) {
     return {
-      reply: `You're welcome! If you need anything else — ideas, products, billing, or careers — just ask. We're also at ${company.email} and WhatsApp ${company.phone}.`,
+      reply: `You're welcome! Ask anytime — or reach us at ${company.email} / WhatsApp ${company.phone}.`,
     };
   }
 
   if (/^(bye|goodbye|see\s*you|later|exit|quit)([\s,!.?]|$)/i.test(t)) {
     return {
-      reply: `Goodbye for now — glad you stopped by. Come back anytime, or reach us at ${company.email} / WhatsApp ${company.phone}.`,
+      reply: `Goodbye — come back anytime. ${company.email} · WhatsApp ${company.phone}`,
     };
   }
 
@@ -441,29 +453,41 @@ export function matchConversationalIntent(message: string): ChatResolution | nul
   ) {
     return {
       reply:
-        `Here's what I can help with:\n` +
-        `• Submit an idea → Innovation Hub\n` +
-        `• Business problem / proposal → Solutions Center\n` +
-        `• Ready-made tools → Products\n` +
-        `• Pay invoice / M-Pesa → Client portal billing\n` +
-        `• Join community or careers → Community & Careers pages\n` +
-        `Say “take me to …” for any of those, or ask in plain English.`,
+        `I can help with:\n` +
+        `• Ideas → Innovation Hub\n` +
+        `• Business problems → Solutions Center\n` +
+        `• Tools → Products\n` +
+        `• Pay invoice → Client billing\n` +
+        `• Community & careers\n` +
+        `Say “take me to …” or ask in plain English.`,
     };
   }
 
   if (/^(who\s+are\s+you|what\s+are\s+you|are\s+you\s+(a\s+)?(bot|ai|human))/i.test(t)) {
     return {
-      reply: `I'm the ${company.name} assistant — I guide you around our site with real company info (services, portals, payments, Innovation Hub). For complex projects our humans reply at ${company.email} or WhatsApp ${company.phone}.`,
+      reply: `I'm the TechFlare site assistant — services, products, portals, and payments. Humans: ${company.email} or WhatsApp ${company.phone}.`,
     };
   }
 
   if (/^(ok|okay|cool|great|nice|perfect|got\s*it|alright)([\s,!.?]|$)/i.test(t)) {
     return {
-      reply: `Glad that helps. What would you like to do next — submit an idea, explore services, or talk to a human?`,
+      reply: `Great. What next — submit an idea, explore services, or contact the team?`,
     };
   }
 
   return null;
+}
+
+/** Backend sometimes still returns the old “Great question about …” stub — replace it. */
+export function sanitizeAssistantReply(reply: string, userMessage: string): string {
+  const text = (reply || "").trim();
+  if (!text) return creativeFallback(userMessage);
+  if (/^great question\b/i.test(text) || /great question about\s+["']/i.test(text)) {
+    const local = matchConversationalIntent(userMessage);
+    if (local) return local.reply;
+    return creativeFallback(userMessage);
+  }
+  return text;
 }
 
 export function creativeFallback(message: string): string {

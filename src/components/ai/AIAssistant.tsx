@@ -1,23 +1,22 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Bell, Navigation } from "lucide-react";
+import { X, Send, Bell, Navigation, MessageCircle } from "lucide-react";
 import {
   buildFollowUpMessage,
   buildFollowUpNotificationBody,
   matchKnowledge,
   resolveChatResponse,
 } from "@/lib/ai-knowledge";
-import { company } from "@/data/site";
 import {
   creativeFallback,
   matchConversationalIntent,
   matchNavigationConfirmation,
   matchNavigationIntent,
+  sanitizeAssistantReply,
   type ChatAction,
 } from "@/lib/ai-navigation";
 
@@ -215,7 +214,6 @@ export function AIAssistant() {
     try {
       const n = new Notification(title, {
         body,
-        icon: "/logo.png",
         tag: "techflare-ai-followup",
       });
       n.onclick = () => {
@@ -327,7 +325,10 @@ export function AIAssistant() {
         return;
       }
 
-      const reply = data.reply || creativeFallback(userText);
+      const reply = sanitizeAssistantReply(
+        typeof data.reply === "string" ? data.reply : creativeFallback(userText),
+        userText
+      );
       const action = data.action as ChatAction | undefined;
       applyAssistantReply(reply, action);
       setShowQuickMenu(false);
@@ -356,31 +357,23 @@ export function AIAssistant() {
               setOpen(true);
               requestNotifications();
             }}
-            className="fixed bottom-6 right-6 z-50 flex items-center gap-0 overflow-hidden rounded-full border border-gold/30 bg-gradient-to-r from-deep-blue via-deep-blue-mid to-deep-blue text-white shadow-xl shadow-black/40 hover:shadow-gold/20 transition-shadow"
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full border border-white/15 bg-background/95 px-4 py-3 text-foreground shadow-xl backdrop-blur-md hover:border-gold/40 transition-colors"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             aria-label="Open TechFlare AI chat"
           >
-            <span className="relative flex h-14 w-14 shrink-0 items-center justify-center">
-              <Image
-                src="/logo.png"
-                alt=""
-                width={40}
-                height={33}
-                unoptimized
-                className="h-10 w-auto object-contain bg-transparent"
-                aria-hidden
-              />
-              <span className="absolute bottom-1 right-1 h-3 w-3 rounded-full border-2 border-deep-blue bg-life-green" />
+            <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold/15 text-gold">
+              <MessageCircle className="h-5 w-5" aria-hidden />
+              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background bg-life-green" />
               {unread > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-life-green px-1 text-[10px] font-bold text-black">
+                <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-life-green px-1 text-[10px] font-bold text-black">
                   {unread}
                 </span>
               )}
             </span>
-            <span className="hidden sm:block pr-5 pl-1 text-left">
+            <span className="hidden sm:block pr-1 text-left">
               <span className="block text-sm font-semibold leading-tight">TechFlare AI</span>
-              <span className="block text-[11px] text-gold/90">Ask us anything</span>
+              <span className="block text-[11px] text-muted-foreground">Ask anything</span>
             </span>
           </motion.button>
         )}
@@ -394,23 +387,10 @@ export function AIAssistant() {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             className="fixed bottom-6 right-6 z-50 flex h-[min(500px,calc(100vh-6rem))] w-[min(380px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-white/10 bg-background/95 shadow-2xl backdrop-blur-xl"
           >
-            <div className="shrink-0 flex items-center justify-between border-b border-white/10 bg-gradient-to-r from-gold/20 to-gold-dark/20 px-4 py-3">
-              <div className="flex items-center gap-3">
-                <div className="relative flex h-9 w-9 items-center justify-center">
-                  <Image
-                    src="/logo.png"
-                    alt=""
-                    width={36}
-                    height={30}
-                    unoptimized
-                    className="h-8 w-auto object-contain bg-transparent"
-                    aria-hidden
-                  />
-                </div>
-                <div>
-                  <span className="block font-semibold leading-tight">TechFlare Solutions AI</span>
-                  <span className="block text-[11px] text-life-green">Online now</span>
-                </div>
+            <div className="shrink-0 flex items-center justify-between border-b border-white/10 px-4 py-3">
+              <div>
+                <span className="block text-sm font-semibold leading-tight">TechFlare AI</span>
+                <span className="block text-[11px] text-life-green">Online</span>
               </div>
               <div className="flex items-center gap-1">
                 {!notificationsEnabled && (
@@ -453,20 +433,6 @@ export function AIAssistant() {
                           : "bg-white/10 text-foreground"
                     }`}
                   >
-                    {msg.role === "assistant" && !msg.isFollowUp && (
-                      <div className="mb-1.5 flex items-center gap-1.5">
-                        <Image
-                          src="/logo.png"
-                          alt=""
-                          width={16}
-                          height={13}
-                          unoptimized
-                          className="h-4 w-auto object-contain bg-transparent"
-                          aria-hidden
-                        />
-                        <span className="text-[10px] font-medium text-gold">TechFlare AI</span>
-                      </div>
-                    )}
                     {msg.content}
                     {msg.action && !msg.action.auto && (
                       <button
