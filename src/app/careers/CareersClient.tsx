@@ -272,11 +272,6 @@ export function CareersClient({ positions: initialPositions }: { positions: JobP
                           size="sm"
                           onClick={() => startApply(pos.title)}
                           disabled={!isCommunityMember}
-                          title={
-                            isCommunityMember
-                              ? "Apply for this role"
-                              : "Join and confirm community membership first"
-                          }
                         >
                           {isCommunityMember ? "Apply now" : "Community required"}
                         </Button>
