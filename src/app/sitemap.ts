@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { products, services, industries } from "@/data/site";
+import { products, industries } from "@/data/site";
 import { SITELINK_PAGES } from "@/data/seo";
 
 const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://www.techflare-solutions.com").replace(
@@ -55,13 +55,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.9,
   }));
 
-  const serviceAnchors = services.map((s) => ({
-    url: `${siteUrl}/services#${s.slug}`,
-    lastModified: now,
-    changeFrequency: "monthly" as const,
-    priority: 0.7,
-  }));
-
+  // Do not include #fragment URLs — invalid in the sitemap protocol and Google ignores/rejects them.
   const industryRoutes = industries.map((ind) => ({
     url: `${siteUrl}/industries/${ind.slug}`,
     lastModified: now,
@@ -71,11 +65,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Deduplicate by URL (sitelink pages also appear in staticRoutes)
   const seen = new Set<string>();
-  return [...sitelinkRoutes, ...staticRoutes, ...productRoutes, ...serviceAnchors, ...industryRoutes].filter(
-    (entry) => {
-      if (seen.has(entry.url)) return false;
-      seen.add(entry.url);
-      return true;
-    }
-  );
+  return [...sitelinkRoutes, ...staticRoutes, ...productRoutes, ...industryRoutes].filter((entry) => {
+    if (seen.has(entry.url)) return false;
+    seen.add(entry.url);
+    return true;
+  });
 }
