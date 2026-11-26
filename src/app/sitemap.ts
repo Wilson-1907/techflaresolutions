@@ -2,7 +2,10 @@ import type { MetadataRoute } from "next";
 import { products, services, industries } from "@/data/site";
 import { SITELINK_PAGES } from "@/data/seo";
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.techflare-solutions.com";
+const siteUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://www.techflare-solutions.com").replace(
+  /\/$/,
+  ""
+);
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
